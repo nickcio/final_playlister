@@ -144,15 +144,37 @@ body {
   float: left;
 }
 
-#list-selector-list {
+#home-wrapper {
   position: absolute;
   left: 0%;
-  top: 10%;
+  top: 0%;
   width: 100%;
   height: 90%;
   display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+#list-selector-list {
+  position: absolute;
+  left: 0%;
+  top: 20%;
+  width: 50%;
+  height: 100%;
+  display: flex;
   flex-direction: column;
   overflow: scroll;
+}
+
+#youtube-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .list-card,
@@ -344,6 +366,11 @@ input {
   text-align: center;
 }
 
+.container {
+  display: flex;
+  flex-direction: row; 
+  font-family: var(--my-font-family);
+}
 /* ANIMATIONS
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 [data-animation] .modal-dialog {
