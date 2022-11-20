@@ -433,7 +433,6 @@ function GlobalStoreContextProvider(props) {
                         payload: playlist
                     });
                     tps.clearAllTransactions();
-                    history.push("/playlist/" + playlist._id);
                 }
             }
         }

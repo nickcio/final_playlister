@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
+import SongCard from './SongCard.js';
+import List from '@mui/material/List';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
@@ -20,7 +22,7 @@ const cardStyle = {
     fontSize: '18pt', 
     backgroundColor: '#eeeedd', 
     borderStyle: 'solid', 
-    borderRight: 1, 
+    borderWidth: 3,
     borderRadius: 13, 
     borderColor: '#000000'
 }
@@ -28,6 +30,7 @@ const cardStyle = {
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
+    const [listOpen, setListOpen] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
 
@@ -37,11 +40,13 @@ function ListCard(props) {
             let _id = event.target.id;
             if (_id.indexOf('list-card-text-') >= 0)
                 _id = ("" + _id).substring("list-card-text-".length);
-
+                
             console.log("load " + event.target.id);
 
             // CHANGE THE CURRENT LIST
             store.setCurrentList(id);
+            setListOpen(true);
+            console.log(listOpen)
         }
     }
 
@@ -109,6 +114,48 @@ function ListCard(props) {
                 </IconButton>
             </Box>
         </ListItem>
+
+    if(store.currentList) {
+        if(idNamePair._id === store.currentList._id) {
+            console.log("SAME LISTS!!")
+            cardElement = <ListItem
+                id={idNamePair._id}
+                key={idNamePair._id}
+                sx={{ marginTop: '15px', display: 'flex', p: 1 }}
+                style={cardStyle}
+                button
+            >
+                <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
+                <Box sx={{ p: 1 }}>
+                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                        <EditIcon style={{fontSize:'18pt'}} />
+                    </IconButton>
+                </Box>
+                <Box sx={{ p: 1 }}>
+                    <IconButton onClick={(event) => {
+                            handleDeleteList(event, idNamePair._id)
+                        }} aria-label='delete'>
+                        <DeleteIcon style={{fontSize:'18pt'}} />
+                    </IconButton>
+                </Box>
+                <List 
+                id="playlist-cards" 
+                sx={{ width: '100%', bgcolor: 'background.paper' }}
+            >
+                {
+                    store.currentList.songs.map((song, index) => (
+                        <SongCard
+                            id={'playlist-song-' + (index)}
+                            key={'playlist-song-' + (index)}
+                            index={index}
+                            song={song}
+                        />
+                    ))  
+                }
+            </List> 
+            </ListItem>
+        }
+    }
 
     if (editActive) {
         cardElement =

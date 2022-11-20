@@ -120,6 +120,11 @@ export default function AppBanner() {
                         </IconButton>
                     </Box>
                 </Toolbar>
+                <Toolbar
+                style={{backgroundColor: 'black'}}
+                >
+                    Bogus
+                </Toolbar>
             </AppBar>
             {
                 menu
