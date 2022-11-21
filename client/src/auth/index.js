@@ -92,6 +92,13 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.getUser = async function (email) {
+        const response = await api.getUser(email);
+        if (response.status === 200) {
+            return response.data.user;
+        }
+    }
+
     auth.getErrorMsg = () => {
         return auth.errorMsg;
     }
@@ -137,9 +144,9 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
+    auth.registerUser = async function(userName, firstName, lastName, email, password, passwordVerify) {
         try{
-            const response = await api.registerUser(firstName, lastName, email, password, passwordVerify);      
+            const response = await api.registerUser(userName, firstName, lastName, email, password, passwordVerify);      
             if (response.status === 200) {
                 authReducer({
                     type: AuthActionType.REGISTER_USER,

@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -26,20 +27,20 @@ import EditToolbar from './EditToolbar';
 const cardStyle = {
     width: '100%', 
     fontSize: '18pt', 
-    backgroundColor: '#eeeedd', 
+    backgroundColor: '#eeeeff', 
     borderStyle: 'solid', 
     borderWidth: 3,
-    borderRadius: 13, 
+    borderRadius: 1, 
     borderColor: '#000000'
 }
 
 const cardStyleOpen = {
     width: '100%', 
     fontSize: '18pt', 
-    backgroundColor: '#eeeedd', 
+    backgroundColor: '#eeeeff', 
     borderStyle: 'solid', 
     borderWidth: 3,
-    borderRadius: 13, 
+    borderRadius: 1, 
     borderColor: '#000000',
     cursor: 'default'
 }
@@ -63,10 +64,13 @@ const songCardStyle = {
 
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [editActive, setEditActive] = useState(false);
     const [listOpen, setListOpen] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
+
+    let userName = ""
 
     function handleLoadList(event, id) {
         console.log("handleLoadList for " + id);
@@ -145,7 +149,7 @@ function ListCard(props) {
                 <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
             </Grid>
             <Grid item xs={12} md={12}>
-                <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+                <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
             </Grid>
             <Grid item xs={11} md={11}></Grid>
             <Grid item xs={1} md={1}>
@@ -174,7 +178,7 @@ function ListCard(props) {
                     <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                    <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+                    <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
                 </Grid>
                 <Grid item xs={12} md={12} sx={{ mt: 44}}>
                     <Box className="inside-list" style={inCard}>

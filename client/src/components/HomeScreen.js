@@ -63,20 +63,6 @@ const HomeScreen = () => {
     }
     return (
         <Grid container spacing={0}>
-            <Grid item xs={7} md={7}>
-            <div id="list-selector-heading">
-            <Fab 
-                color="primary" 
-                aria-label="add"
-                id="add-list-button"
-                onClick={handleCreateNewList}
-            >
-                <AddIcon />
-            </Fab>
-                <Typography variant="h2">Your Lists</Typography>
-            </div>
-            </Grid>
-            <Grid item xs={5} md={5}>
             <div id="list-selector-list">
                 {
                     listCard
@@ -84,7 +70,6 @@ const HomeScreen = () => {
                 <MUIDeleteModal />
                 { modalJSX }
             </div>
-            </Grid>
         </Grid>)
 }
 

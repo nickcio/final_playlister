@@ -133,11 +133,12 @@ getPlaylistPairs = async (req, res) => {
                         let list = playlists[key];
                         let pair = {
                             _id: list._id,
-                            name: list.name
+                            name: list.name,
+                            playlist: list
                         };
                         pairs.push(pair);
                     }
-                    return res.status(200).json({ success: true, idNamePairs: pairs })
+                    return res.status(200).json({ success: true, idNamePairs: pairs, playlists: playlists })
                 }
             }).catch(err => console.log(err))
         }
