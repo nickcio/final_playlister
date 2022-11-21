@@ -365,6 +365,7 @@ function GlobalStoreContextProvider(props) {
             }
             );
 
+            store.loadIdNamePairs();
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
         }
         else {

@@ -10,6 +10,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import IconButton from '@mui/material/IconButton';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -62,6 +64,10 @@ function ListCard(props) {
         }
     }
 
+    function handleCloseList() {
+        store.closeCurrentList();
+    }
+
     function handleToggleEdit(event) {
         event.stopPropagation();
         toggleEdit();
@@ -108,23 +114,40 @@ function ListCard(props) {
             sx={{ marginTop: '15px', display: 'flex', p: 1 }}
             style={cardStyle}
             button
-            onClick={(event) => {
-                handleLoadList(event, idNamePair._id)
-            }}
+            onDoubleClick={handleToggleEdit}
         >
-            <Typography sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Typography>
-            <Box sx={{ p: 1 }}>
-                <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                    <EditIcon style={{fontSize:'18pt'}} />
-                </IconButton>
-            </Box>
-            <Box sx={{ p: 1 }}>
-                <IconButton onClick={(event) => {
-                        handleDeleteList(event, idNamePair._id)
-                    }} aria-label='delete'>
-                    <DeleteIcon style={{fontSize:'18pt'}} />
-                </IconButton>
-            </Box>
+        <Grid container spacing={0}>
+            <Grid item xs={12} md={12}>
+                <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
+            </Grid>
+            <Grid item xs={12} md={12}>
+                <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+            </Grid>
+            <Grid item xs={9} md={9}></Grid>
+            <Grid item xs={1} md={1}>
+                <Box sx={{ }}>
+                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                        <EditIcon style={{ fontSize:'18pt'}} />
+                    </IconButton>
+                </Box>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Box >
+                    <IconButton onClick={(event) => {
+                            handleDeleteList(event, idNamePair._id)
+                        }} aria-label='delete'>
+                        <DeleteIcon style={{fontSize:'18pt'}} />
+                    </IconButton>
+                </Box>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Box >
+                    <IconButton onClick={(event) => {handleLoadList(event, idNamePair._id)}} aria-label='edit'>
+                        <KeyboardDoubleArrowDownIcon style={{ fontSize:'18pt'}} />
+                    </IconButton>
+                </Box>
+            </Grid>
+        </Grid>
         </ListItem>
 
     if(store.currentList) {
@@ -133,48 +156,72 @@ function ListCard(props) {
             cardElement = <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{ height: '20rem', marginTop: '15px', p: 1 }}
+                sx={{ height: '30rem', marginTop: '15px', p: 1 }}
                 style={cardStyle}
                 button
                 className='list-container'
             >
-                <Typography sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Typography>
-                <Box sx={{ p: 1 }}>
-                    <IconButton onClick={(event) => {
-                            handleDeleteList(event, idNamePair._id)
-                        }} aria-label='delete'>
-                        <DeleteIcon style={{fontSize:'18pt'}} />
-                    </IconButton>
-                </Box>
-            <Grid className='list-container'>
-            
-                <Box className="inside-list" style={inCard}>
-                    <List 
-                    id="playlist-cards" 
-                    sx={{ width: '100%', bgcolor: 'background.paper' }}
-                    >
-                    {
-                        store.currentList.songs.map((song, index) => (
-                            <SongCard
-                                id={'playlist-song-' + (index)}
-                                key={'playlist-song-' + (index)}
-                                index={index}
-                                song={song}
-                            />
-                        ))  
-                    }
-                    </List> 
-                </Box>
+             <Grid container spacing={0}>
+                <Grid item xs={12} md={12}>
+                    <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
+                </Grid>
+                <Grid item xs={12} md={12}>
+                    <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+                </Grid>
+                <Grid item xs={12} md={12} sx={{ mt: 46}}>
+                    <Box className="inside-list" style={inCard}>
+                        <List 
+                        id="playlist-cards" 
+                        sx={{ width: '100%', bgcolor: 'background.paper' }}
+                        >
+                        {
+                            store.currentList.songs.map((song, index) => (
+                                <SongCard
+                                    id={'playlist-song-' + (index)}
+                                    key={'playlist-song-' + (index)}
+                                    index={index}
+                                    song={song}
+                                />
+                            ))  
+                        }
+                        </List> 
+                    </Box>
             </Grid>
-                
-            
+                <Grid item xs={10} md={10}></Grid>
+                <Grid item xs={1} md={1}>
+                    <Box >
+                        <IconButton onClick={(event) => {
+                                handleDeleteList(event, idNamePair._id)
+                            }} aria-label='delete'>
+                            <DeleteIcon style={{fontSize:'18pt'}} />
+                        </IconButton>
+                    </Box>
+                </Grid>
+                <Grid item xs={1} md={1}>
+                    <Box >
+                        <IconButton onClick={handleCloseList} aria-label='edit'>
+                            <KeyboardDoubleArrowUpIcon style={{ fontSize:'18pt'}} />
+                        </IconButton>
+                    </Box>
+                </Grid>
+            </Grid>
             </ListItem>
         }
     }
 
     if (editActive) {
         cardElement =
-            <TextField
+        <ListItem
+        id={idNamePair._id}
+        key={idNamePair._id}
+        sx={{ marginTop: '15px', display: 'flex', p: 1 }}
+        style={cardStyle}
+        button
+        onDoubleClick={handleToggleEdit}
+    >
+    <Grid container spacing={0}>
+        <Grid item xs={6} md={6}>
+        <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -186,10 +233,42 @@ function ListCard(props) {
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 48}}}
-                InputLabelProps={{style: {fontSize: 24}}}
+                inputProps={{style: {fontSize: 18}}}
+                InputLabelProps={{style: {fontSize: 18}}}
                 autoFocus
+                sx={{backgroundColor:'white', borderRadius:1}}
             />
+        </Grid>
+        <Grid item xs={12} md={12}>
+            <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+        </Grid>
+        <Grid item xs={9} md={9}></Grid>
+        <Grid item xs={1} md={1}>
+            <Box sx={{ }}>
+                <IconButton onClick={handleToggleEdit} aria-label='edit'>
+                    <EditIcon style={{ fontSize:'18pt'}} />
+                </IconButton>
+            </Box>
+        </Grid>
+        <Grid item xs={1} md={1}>
+            <Box >
+                <IconButton onClick={(event) => {
+                        handleDeleteList(event, idNamePair._id)
+                    }} aria-label='delete'>
+                    <DeleteIcon style={{fontSize:'18pt'}} />
+                </IconButton>
+            </Box>
+        </Grid>
+        <Grid item xs={1} md={1}>
+            <Box >
+                <IconButton onClick={(event) => {handleLoadList(event, idNamePair._id)}} aria-label='edit'>
+                    <KeyboardDoubleArrowDownIcon style={{ fontSize:'18pt'}} />
+                </IconButton>
+            </Box>
+        </Grid>
+    </Grid>
+    </ListItem>
+            
     }
     return (
         cardElement

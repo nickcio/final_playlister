@@ -7,6 +7,7 @@ import MUIRemoveSongModal from './MUIRemoveSongModal'
 import AddIcon from '@mui/icons-material/Add';
 import Fab from '@mui/material/Fab'
 import List from '@mui/material/List';
+import Grid from '@mui/material/Grid'
 
 import Typography from '@mui/material/Typography'
 /*
@@ -61,7 +62,8 @@ const HomeScreen = () => {
             </List>;
     }
     return (
-        <div id="playlist-selector" >
+        <Grid container spacing={0}>
+            <Grid item xs={7} md={7}>
             <div id="list-selector-heading">
             <Fab 
                 color="primary" 
@@ -73,6 +75,8 @@ const HomeScreen = () => {
             </Fab>
                 <Typography variant="h2">Your Lists</Typography>
             </div>
+            </Grid>
+            <Grid item xs={5} md={5}>
             <div id="list-selector-list">
                 {
                     listCard
@@ -80,7 +84,8 @@ const HomeScreen = () => {
                 <MUIDeleteModal />
                 { modalJSX }
             </div>
-        </div>)
+            </Grid>
+        </Grid>)
 }
 
 export default HomeScreen;
