@@ -1,7 +1,7 @@
 import React, { useContext, createContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
-import GlobalStoreContext from '../store';
+import { GlobalStoreContext } from '../store';
 
 const AuthContext = createContext();
 console.log("create AuthContext: " + AuthContext);
@@ -179,6 +179,8 @@ function AuthContextProvider(props) {
                     }
                 })
                 history.push("/");
+                console.log("TO HOME")
+                store.viewToHome();
             }
         }catch(error){
             let errorMsg = error.response.data.errorMessage;

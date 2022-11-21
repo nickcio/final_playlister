@@ -1,6 +1,8 @@
 import { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 import SongCard from './SongCard.js';
 import List from '@mui/material/List';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -21,6 +23,16 @@ const cardStyle = {
     width: '100%', 
     fontSize: '18pt', 
     backgroundColor: '#eeeedd', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 13, 
+    borderColor: '#000000'
+}
+
+const inCard = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#7b8894', 
     borderStyle: 'solid', 
     borderWidth: 3,
     borderRadius: 13, 
@@ -100,7 +112,7 @@ function ListCard(props) {
                 handleLoadList(event, idNamePair._id)
             }}
         >
-            <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
+            <Typography sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Typography>
             <Box sx={{ p: 1 }}>
                 <IconButton onClick={handleToggleEdit} aria-label='edit'>
                     <EditIcon style={{fontSize:'18pt'}} />
@@ -121,16 +133,12 @@ function ListCard(props) {
             cardElement = <ListItem
                 id={idNamePair._id}
                 key={idNamePair._id}
-                sx={{ marginTop: '15px', display: 'flex', p: 1 }}
+                sx={{ height: '20rem', marginTop: '15px', p: 1 }}
                 style={cardStyle}
                 button
+                className='list-container'
             >
-                <Box sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Box>
-                <Box sx={{ p: 1 }}>
-                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                        <EditIcon style={{fontSize:'18pt'}} />
-                    </IconButton>
-                </Box>
+                <Typography sx={{ p: 1, flexGrow: 1 }}>{idNamePair.name}</Typography>
                 <Box sx={{ p: 1 }}>
                     <IconButton onClick={(event) => {
                             handleDeleteList(event, idNamePair._id)
@@ -138,21 +146,28 @@ function ListCard(props) {
                         <DeleteIcon style={{fontSize:'18pt'}} />
                     </IconButton>
                 </Box>
-                <List 
-                id="playlist-cards" 
-                sx={{ width: '100%', bgcolor: 'background.paper' }}
-            >
-                {
-                    store.currentList.songs.map((song, index) => (
-                        <SongCard
-                            id={'playlist-song-' + (index)}
-                            key={'playlist-song-' + (index)}
-                            index={index}
-                            song={song}
-                        />
-                    ))  
-                }
-            </List> 
+            <Grid className='list-container'>
+            
+                <Box className="inside-list" style={inCard}>
+                    <List 
+                    id="playlist-cards" 
+                    sx={{ width: '100%', bgcolor: 'background.paper' }}
+                    >
+                    {
+                        store.currentList.songs.map((song, index) => (
+                            <SongCard
+                                id={'playlist-song-' + (index)}
+                                key={'playlist-song-' + (index)}
+                                index={index}
+                                song={song}
+                            />
+                        ))  
+                    }
+                    </List> 
+                </Box>
+            </Grid>
+                
+            
             </ListItem>
         }
     }
