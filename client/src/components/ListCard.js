@@ -12,6 +12,8 @@ import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import AddIcon from '@mui/icons-material/Add';
+import EditToolbar from './EditToolbar';
 
 /*
     This is a card in our list of top 5 lists. It lets select
@@ -31,14 +33,32 @@ const cardStyle = {
     borderColor: '#000000'
 }
 
-const inCard = {
+const cardStyleOpen = {
     width: '100%', 
     fontSize: '18pt', 
-    backgroundColor: '#7b8894', 
+    backgroundColor: '#eeeedd', 
     borderStyle: 'solid', 
     borderWidth: 3,
     borderRadius: 13, 
-    borderColor: '#000000'
+    borderColor: '#000000',
+    cursor: 'default'
+}
+
+const inCard = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#94a1e3'
+}
+
+const songCardStyle = {
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 13, 
+    borderColor: '#000000',
+    fontSize: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex'
 }
 
 function ListCard(props) {
@@ -62,6 +82,10 @@ function ListCard(props) {
             setListOpen(true);
             console.log(listOpen)
         }
+    }
+
+    function handleAddNewSong() {
+        store.addNewSong();
     }
 
     function handleCloseList() {
@@ -123,23 +147,7 @@ function ListCard(props) {
             <Grid item xs={12} md={12}>
                 <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
             </Grid>
-            <Grid item xs={9} md={9}></Grid>
-            <Grid item xs={1} md={1}>
-                <Box sx={{ }}>
-                    <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                        <EditIcon style={{ fontSize:'18pt'}} />
-                    </IconButton>
-                </Box>
-            </Grid>
-            <Grid item xs={1} md={1}>
-                <Box >
-                    <IconButton onClick={(event) => {
-                            handleDeleteList(event, idNamePair._id)
-                        }} aria-label='delete'>
-                        <DeleteIcon style={{fontSize:'18pt'}} />
-                    </IconButton>
-                </Box>
-            </Grid>
+            <Grid item xs={11} md={11}></Grid>
             <Grid item xs={1} md={1}>
                 <Box >
                     <IconButton onClick={(event) => {handleLoadList(event, idNamePair._id)}} aria-label='edit'>
@@ -157,7 +165,7 @@ function ListCard(props) {
                 id={idNamePair._id}
                 key={idNamePair._id}
                 sx={{ height: '30rem', marginTop: '15px', p: 1 }}
-                style={cardStyle}
+                style={cardStyleOpen}
                 button
                 className='list-container'
             >
@@ -168,11 +176,11 @@ function ListCard(props) {
                 <Grid item xs={12} md={12}>
                     <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
                 </Grid>
-                <Grid item xs={12} md={12} sx={{ mt: 46}}>
+                <Grid item xs={12} md={12} sx={{ mt: 44}}>
                     <Box className="inside-list" style={inCard}>
                         <List 
                         id="playlist-cards" 
-                        sx={{ width: '100%', bgcolor: 'background.paper' }}
+                        sx={{ width: '100%' }}
                         >
                         {
                             store.currentList.songs.map((song, index) => (
@@ -184,19 +192,21 @@ function ListCard(props) {
                                 />
                             ))  
                         }
+                        <Box 
+                        style={songCardStyle} 
+                        className="list-card unselected-list-card"
+                        disabled={!store.canAddNewSong() || store.modalOpen()}
+                        onClick={handleAddNewSong}
+                        >
+                            <AddIcon/>
+                        </Box>
                         </List> 
                     </Box>
-            </Grid>
-                <Grid item xs={10} md={10}></Grid>
-                <Grid item xs={1} md={1}>
-                    <Box >
-                        <IconButton onClick={(event) => {
-                                handleDeleteList(event, idNamePair._id)
-                            }} aria-label='delete'>
-                            <DeleteIcon style={{fontSize:'18pt'}} />
-                        </IconButton>
-                    </Box>
                 </Grid>
+                <Grid item xs={12} md={12}>
+                    <EditToolbar/>
+                </Grid>
+                <Grid item xs={11} md={11}></Grid>
                 <Grid item xs={1} md={1}>
                     <Box >
                         <IconButton onClick={handleCloseList} aria-label='edit'>
@@ -242,14 +252,7 @@ function ListCard(props) {
         <Grid item xs={12} md={12}>
             <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
         </Grid>
-        <Grid item xs={9} md={9}></Grid>
-        <Grid item xs={1} md={1}>
-            <Box sx={{ }}>
-                <IconButton onClick={handleToggleEdit} aria-label='edit'>
-                    <EditIcon style={{ fontSize:'18pt'}} />
-                </IconButton>
-            </Box>
-        </Grid>
+        <Grid item xs={10} md={10}></Grid>
         <Grid item xs={1} md={1}>
             <Box >
                 <IconButton onClick={(event) => {

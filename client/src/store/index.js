@@ -158,7 +158,7 @@ function GlobalStoreContextProvider(props) {
                     currentModal : CurrentModal.DELETE_LIST,
                     currentView : store.currentView,
                     idNamePairs: store.idNamePairs,
-                    currentList: null,
+                    currentList: store.currentList,
                     playingList: store.playingList,
                     currentSongIndex: -1,
                     currentSong: null,

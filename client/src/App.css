@@ -190,23 +190,24 @@ body {
 .list-card:aria-disabled,
 .list-card[aria-disabled] {
   border: 1px solid #999999;
-  color: #666666;
+  color: white;
   pointer-events: none;
 }
 
 .unselected-list-card:hover {
   cursor: pointer;
-  background-color: var(--swatch-contrast);
+  background-color: #998115;
   color: white;
 }
 
 .selected-list-card {
-  background-color: var(--swatch-accent);
+  background-color: #998115;
   color: white;
 }
 
 .unselected-list-card {
-  background-color: var(--swatch-complement);
+  background-color: #191075;
+  color: white;
 }
 
 .list-card-button {
@@ -281,6 +282,10 @@ body {
 
 input {
   font-size: 20pt;
+}
+
+.song-link {
+  color: white;
 }
 
 .top5-item,

@@ -5,6 +5,8 @@ import AddIcon from '@mui/icons-material/Add';
 import RedoIcon from '@mui/icons-material/Redo';
 import UndoIcon from '@mui/icons-material/Undo';
 import CloseIcon from '@mui/icons-material/HighlightOff';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 
 /*
     This toolbar is a functional React component that
@@ -12,52 +14,105 @@ import CloseIcon from '@mui/icons-material/HighlightOff';
     
     @author McKilla Gorilla
 */
+
+const buttonStyle = {
+    width: '100%', 
+    height: '100%',
+    fontSize: '10pt', 
+    backgroundColor: 'lightgray', 
+    borderStyle: 'solid', 
+    borderWidth: 2,
+    borderRadius: 3, 
+    borderColor: 'black',
+    color: 'black',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'sans-serif',
+    cursor: 'pointer'
+}
+
+const buttonStyleDisabled = {
+    width: '100%', 
+    height: '100%',
+    fontSize: '10pt', 
+    backgroundColor: 'darkgray', 
+    borderStyle: 'solid', 
+    borderWidth: 2,
+    borderRadius: 3, 
+    borderColor: 'black',
+    color: 'black',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'sans-serif',
+    cursor: 'default'
+}
+
 function EditToolbar() {
     const { store } = useContext(GlobalStoreContext);
 
-    function handleAddNewSong() {
-        store.addNewSong();
-    }
     function handleUndo() {
         store.undo();
     }
     function handleRedo() {
         store.redo();
     }
-    function handleClose() {
-        store.closeCurrentList();
+
+    async function handleDeleteList(event, id) {
+        event.stopPropagation();
+        let _id = event.target.id;
+        _id = ("" + _id).substring("delete-list-".length);
+        store.markListForDeletion(id);
     }
+
     return (
-        <div id="edit-toolbar">
-            <Button
-                disabled={!store.canAddNewSong() || store.modalOpen()}
-                id='add-song-button'
-                onClick={handleAddNewSong}
-                variant="contained">
-                <AddIcon />
-            </Button>
-            <Button 
-                disabled={!store.canUndo() || store.modalOpen()}
-                id='undo-button'
-                onClick={handleUndo}
-                variant="contained">
-                    <UndoIcon />
-            </Button>
-            <Button 
-                disabled={!store.canRedo() || store.modalOpen()}
-                id='redo-button'
-                onClick={handleRedo}
-                variant="contained">
-                    <RedoIcon />
-            </Button>
-            <Button 
-                disabled={!store.canClose() || store.modalOpen()}
-                id='close-button'
-                onClick={handleClose}
-                variant="contained">
-                    <CloseIcon />
-            </Button>
-        </div>
+        <Grid container spacing={0.7}>
+            <Grid item xs={2} md={2}>
+                <Box
+                    id='undo-button'
+                    onClick={handleUndo}
+                    style={(!store.canUndo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
+                    Undo
+                </Box>
+            </Grid>
+            <Grid item xs={2} md={2}>
+                <Box
+                    id='redo-button'
+                    onClick={handleRedo}
+                    style={(!store.canRedo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
+                    Redo
+                </Box>
+            </Grid>
+            <Grid item xs={2} md={2}></Grid>
+            <Grid item xs={2} md={2}>
+                <Box
+                id='publish-button'
+                style={buttonStyle}
+                >
+                    Publish
+                </Box>
+            </Grid>
+            <Grid item xs={2} md={2}>
+                <Box
+                id='delete-list-button'
+                style={buttonStyle}
+                onClick={(event) => {
+                    handleDeleteList(event, store.currentList._id)
+                }}
+                >
+                    Delete
+                </Box>
+            </Grid>
+            <Grid item xs={2} md={2}>
+                <Box 
+                    id='duplicate-button'
+                    style={buttonStyle}>
+                    Duplicate
+                </Box>
+            </Grid>
+            
+        </Grid>
     )
 }
 
