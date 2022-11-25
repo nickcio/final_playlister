@@ -6,10 +6,21 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 
+const cardStyle = {
+    width: '99%', 
+    fontSize: '18pt', 
+    backgroundColor: '#eeeeff', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 1, 
+    borderColor: '#000000',
+    height: '86%'
+}
+
 const Comments = () => {
     return (
-        <Box>
-            Goodbye
+        <Box style={cardStyle}>
+            Comments
         </Box>
     )
 }

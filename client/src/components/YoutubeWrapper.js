@@ -10,20 +10,25 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 
+
 const boxStyle = { 
-    width: '50%', 
+    width: '100%', 
     height: '3rem',
     fontSize: '20pt', 
-    backgroundColor: '#eeeedd', 
+    backgroundColor: '#eeeeff', 
     borderStyle: 'solid',
     borderWidth: '2px',
     borderRadius: 3,
     borderColor: '#000000',
-    textAlign: 'center'
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    fontFamily: 'sans-serif'
     }
 
 const boxStyleOff = { 
-        width: '50%', 
+        width: '100%', 
         height: '3rem',
         fontSize: '20pt', 
         backgroundColor: '#a1a199', 
@@ -31,7 +36,11 @@ const boxStyleOff = {
         borderWidth: '2px',
         borderRadius: 3,
         borderColor: '#000000',
-        textAlign: 'center'
+        textAlign: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        display: 'flex',
+        fontFamily: 'sans-serif'
         }
     
 
@@ -69,20 +78,24 @@ const YoutubeWrapper = () => {
 
     return (
         <div id="youtube-wrapper" >
-        <div className="container">
-            <Button
-            style={playerBox}
-            onClick = {handlePlayerClick}
-            >
-                Player
-            </Button>
-            <Button
-            style={commentBox}
-            onClick = {handleCommentClick}
-            >
-                Comments
-            </Button>
-        </div>
+        <Grid container spacing={0}>
+            <Grid item xs={3} md={3}>
+                <Box
+                style={playerBox}
+                onClick = {handlePlayerClick}
+                >
+                    Player
+                </Box>
+            </Grid>
+            <Grid item xs={3} md={3}>
+                <Box
+                style={commentBox}
+                onClick = {handleCommentClick}
+                >
+                    Comments
+                </Box>
+            </Grid>
+        </Grid>
          
          {currentPlayer}
         </div>

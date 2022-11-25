@@ -24,10 +24,10 @@ body {
   background-image: linear-gradient(to bottom, #94a1e3, #224198);
   font-family: "Lexend Exa";
   position: absolute;
-  width: 80%;
-  left: 10%;
-  height: 90%;
-  top: 5%;
+  width: 100%;
+  left: 0%;
+  height: 100%;
+  top: 0%;
   opacity: 1
 }
 
@@ -63,9 +63,9 @@ body {
   border-style: solid;
   border-radius: 10px;
   padding-left: 0%;
-  padding-top: 5%;
+  padding-top: 2%;
   padding-bottom: 5%;
-  height:60%;
+  height:80%;
   text-align: center;
   vertical-align: center;
 }
@@ -150,7 +150,7 @@ body {
   left: 0%;
   top: 0%;
   width: 100%;
-  height: 31.2rem;
+  height: 80%;
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -160,8 +160,8 @@ body {
   position: absolute;
   left: 0%;
   top: 0%;
-  width: 50%;
-  height: 31.2rem;
+  width: 60%;
+  height: 95%;
   display: flex;
   flex-direction: column;
   overflow: scroll;
@@ -169,10 +169,10 @@ body {
 
 #youtube-wrapper {
   position: absolute;
-  left: 50%;
+  left: 60%;
   top: 0%;
-  width: 50%;
-  height: 31.2rem;
+  width: 40%;
+  height: 95%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -216,7 +216,7 @@ body {
 }
 
 #home-wrapper {
-  top: 8rem;
+  top: 17%;
 }
 
 #workspace-home,

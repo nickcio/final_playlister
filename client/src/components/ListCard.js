@@ -13,6 +13,8 @@ import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import AddIcon from '@mui/icons-material/Add';
 import EditToolbar from './EditToolbar';
 
@@ -69,8 +71,32 @@ function ListCard(props) {
     const [listOpen, setListOpen] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
+    let published = false;
 
     let userName = ""
+    if(idNamePair.playlist.userName){
+        userName = idNamePair.playlist.userName;
+    }
+    let likes = 0;
+    if(idNamePair.playlist.likes){
+        likes = idNamePair.playlist.likes
+    }
+    let dislikes = 0;
+    if(idNamePair.playlist.dislikes){
+        dislikes = idNamePair.playlist.dislikes;
+    }
+    let listens = 0;
+    if(idNamePair.playlist.listens){
+        listens = idNamePair.playlist.listen;
+    }
+    let publishDate = "";
+    if(idNamePair.playlist.publishDate){
+        published = true;
+        publishDate = idNamePair.playlist.publishDate;
+    }
+
+
+    let thumbUp = "";
 
     function handleLoadList(event, id) {
         console.log("handleLoadList for " + id);
@@ -145,13 +171,30 @@ function ListCard(props) {
             onDoubleClick={handleToggleEdit}
         >
         <Grid container spacing={0}>
-            <Grid item xs={12} md={12}>
+            <Grid item xs={8} md={8}>
                 <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Typography sx={{ fontSize:'10pt' }}>{published ? likes : ""}</Typography>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
+            </Grid>
+            <Grid item xs={1} md={1}>
+                <Typography sx={{ fontSize:'10pt' }}>{published ? dislikes : ""}</Typography>
             </Grid>
             <Grid item xs={12} md={12}>
                 <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
             </Grid>
-            <Grid item xs={11} md={11}></Grid>
+            <Grid item xs={8} md={8}>
+                <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
+            </Grid>
+            <Grid item xs={3} md={3}>
+                <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
+            </Grid>
             <Grid item xs={1} md={1}>
                 <Box >
                     <IconButton onClick={(event) => {handleLoadList(event, idNamePair._id)}} aria-label='edit'>
@@ -174,8 +217,20 @@ function ListCard(props) {
                 className='list-container'
             >
              <Grid container spacing={0}>
-                <Grid item xs={12} md={12}>
+                <Grid item xs={8} md={8}>
                     <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
+                </Grid>
+                <Grid item xs={1} md={1}>
+                    <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+                </Grid>
+                <Grid item xs={1} md={1}>
+                    <Typography sx={{ fontSize:'10pt' }}>{published ? likes : ""}</Typography>
+                </Grid>
+                <Grid item xs={1} md={1}>
+                    <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
+                </Grid>
+                <Grid item xs={1} md={1}>
+                    <Typography sx={{ fontSize:'10pt' }}>{published ? dislikes : ""}</Typography>
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
@@ -210,7 +265,12 @@ function ListCard(props) {
                 <Grid item xs={12} md={12}>
                     <EditToolbar/>
                 </Grid>
-                <Grid item xs={11} md={11}></Grid>
+                <Grid item xs={8} md={8}>
+                    <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
+                </Grid>
+                <Grid item xs={3} md={3}>
+                    <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
+                </Grid>
                 <Grid item xs={1} md={1}>
                     <Box >
                         <IconButton onClick={handleCloseList} aria-label='edit'>
@@ -254,7 +314,7 @@ function ListCard(props) {
             />
         </Grid>
         <Grid item xs={12} md={12}>
-            <Typography sx={{ fontSize:'8pt' }}>By:</Typography>
+            <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
         </Grid>
         <Grid item xs={10} md={10}></Grid>
         <Grid item xs={1} md={1}>
