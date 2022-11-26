@@ -433,6 +433,40 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.publishList = function (id) {
+        console.log("PUBLISHING")
+        async function asyncPublish(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                playlist.publishDate = (new Date()).toISOString();
+                async function updateList(playlist) {
+                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    if (response.data.success) {
+                        async function getListPairs(playlist) {
+                            response = await api.getPlaylistPairs();
+                            if (response.data.success) {
+                                let pairsArray = response.data.idNamePairs;
+                                let allLists = response.data.playlists;
+                                console.log(allLists)
+                                storeReducer({
+                                    type: GlobalStoreActionType.CHANGE_LIST_NAME,
+                                    payload: {
+                                        idNamePairs: pairsArray,
+                                        allPlaylists: allLists
+                                    }
+                                });
+                            }
+                        }
+                        getListPairs(playlist);
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncPublish(id);
+    }
+
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         async function asyncLoadIdNamePairs() {
@@ -502,7 +536,19 @@ function GlobalStoreContextProvider(props) {
         console.log("CURRENT SORT:")
         console.log(store.currentSort)
         if(store.currentSort === CurrentSort.PUBLISH_DATE) {
-            return ((a,b) => a.createdAt > b.createdAt);
+            let publishD = function (a,b) {
+                if(a.publishDate && b.publishDate) {
+                    return Date.parse(a.publishDate) > Date.parse(b.publishDate)
+                }
+                if(a.publishDate) {
+                    return 1;
+                }
+                if(b.publishDate) {
+                    return -1;
+                }
+                return Date.parse(a.createdAt) > Date.parse(b.createdAt)
+            }
+            return publishD;
         }
         if(store.currentSort === CurrentSort.NAME) {
             return ((a,b) => a.name.toLowerCase() > b.name.toLowerCase());

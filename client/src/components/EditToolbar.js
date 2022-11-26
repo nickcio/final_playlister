@@ -53,7 +53,7 @@ const buttonStyleDisabled = {
 function EditToolbar(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const { published, email } = props;
+    const { id, published, email } = props;
     let isPublished = Boolean(published);
     let isOwner = Boolean(auth.user.email === email)
 
@@ -62,6 +62,9 @@ function EditToolbar(props) {
     }
     function handleRedo() {
         store.redo();
+    }
+    function handlePublish() {
+        store.publishList(store.currentList._id);
     }
 
     let undoButton = ""
@@ -87,6 +90,7 @@ function EditToolbar(props) {
         publishButton = 
         <Box
         id='publish-button'
+        onClick={handlePublish}
         style={buttonStyle}
         >
         Publish

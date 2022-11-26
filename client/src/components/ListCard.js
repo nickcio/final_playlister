@@ -90,7 +90,10 @@ function ListCard(props) {
         listens = idNamePair.playlist.listen;
     }
     let publishDate = "";
+    console.log(idNamePair.playlist)
     if(idNamePair.playlist.publishDate){
+        console.log("THIS LIST IS PUBLISHED")
+        console.log(idNamePair.playlist.publishDate);
         published = true;
         publishDate = idNamePair.playlist.publishDate;
     }
@@ -270,7 +273,7 @@ function ListCard(props) {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                    <EditToolbar published={published} email={idNamePair.playlist.ownerEmail}/>
+                    <EditToolbar id={idNamePair._id} published={published} email={idNamePair.playlist.ownerEmail}/>
                 </Grid>
                 <Grid item xs={8} md={8}>
                     <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
