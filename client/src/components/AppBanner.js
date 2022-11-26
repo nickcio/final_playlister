@@ -58,6 +58,32 @@ export default function AppBanner() {
         setAnchorSortEl(null);
     };
 
+    const handleSortName = () => {
+        console.log("SET TO NAME")
+        handleSortMenuClose();
+        store.setSortType(0);
+    }
+
+    const handleSortDate = () => {
+        handleSortMenuClose();
+        store.setSortType(1);
+    }
+
+    const handleSortListen = () => {
+        handleSortMenuClose();
+        store.setSortType(2);
+    }
+
+    const handleSortLike = () => {
+        handleSortMenuClose();
+        store.setSortType(3);
+    }
+
+    const handleSortDislike = () => {
+        handleSortMenuClose();
+        store.setSortType(4);
+    }
+
     const handleLogout = () => {
         handleMenuClose();
         store.closeCurrentList();
@@ -108,7 +134,7 @@ export default function AppBanner() {
     const sortMenuId = "sort-menu"
     const sortMenu =
         <Menu
-            anchorSortEl={anchorSortEl}
+            anchorEl={anchorSortEl}
             anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -120,16 +146,16 @@ export default function AppBanner() {
                 horizontal: 'right',
             }}
             style={{
-                transform: 'translateX(-1%) translateY(15%)'
+                transform: 'translateY(5%)'
             }}
             open={isSortOpen}
             onClose={handleSortMenuClose}
         >
-            <MenuItem>Name (A-Z)</MenuItem>
-            <MenuItem>Publish Date (Newest)</MenuItem>
-            <MenuItem>Listens (High-Low)</MenuItem>
-            <MenuItem>Likes (High-Low)</MenuItem>
-            <MenuItem>Dislikes (High-Low)</MenuItem>
+            <MenuItem onClick={handleSortName}>Name (A-Z)</MenuItem>
+            <MenuItem onClick={handleSortDate}>Publish Date (Newest)</MenuItem>
+            <MenuItem onClick={handleSortListen}>Listens (High-Low)</MenuItem>
+            <MenuItem onClick={handleSortLike}>Likes (High-Low)</MenuItem>
+            <MenuItem onClick={handleSortDislike}>Dislikes (High-Low)</MenuItem>
         </Menu>
 
 

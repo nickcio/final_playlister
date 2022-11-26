@@ -33,7 +33,9 @@ export const GlobalStoreActionType = {
     HIDE_MODALS: "HIDE_MODALS",
     UNMARK_LIST: "UNMARK_LIST",
     ACCOUNT_ERROR: "ACCOUNT_ERROR",
-    CHANGE_VIEW: "CHANGE_VIEW"
+    CHANGE_VIEW: "CHANGE_VIEW",
+    SET_PLAYING_LIST: "SET_PLAYING_LIST",
+    SET_SORT_TYPE: "SET_SORT_TYPE"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -53,6 +55,14 @@ const CurrentView = {
     USER_LISTS : "USER_LISTS"
 }
 
+const CurrentSort = {
+    NAME: "NAME",
+    PUBLISH_DATE: "PUBLISH_DATE",
+    LISTENS: "LISTENS",
+    LIKES: "LIKES",
+    DISLIKES: "DISLIKES"
+}
+
 // WITH THIS WE'RE MAKING OUR GLOBAL DATA STORE
 // AVAILABLE TO THE REST OF THE APPLICATION
 function GlobalStoreContextProvider(props) {
@@ -60,6 +70,7 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         currentModal : CurrentModal.NONE,
         currentView : CurrentView.HOME_SCREEN,
+        currentSort : CurrentSort.PUBLISH_DATE,
         idNamePairs: [],
         currentList: null,
         playingList: null,
@@ -90,6 +101,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: payload.idNamePairs,
                     currentList: null,
                     playingList: store.playingList,
@@ -108,6 +120,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     playingList: store.playingList,
@@ -126,6 +139,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     playingList: store.playingList,
@@ -144,6 +158,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: payload.idNamePairs,
                     currentList: null,
                     playingList: store.playingList,
@@ -162,6 +177,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.DELETE_LIST,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
@@ -180,6 +196,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     playingList: store.playingList,
@@ -198,6 +215,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: payload,
                     playingList: store.playingList,
@@ -216,6 +234,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.EDIT_SONG,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
@@ -233,6 +252,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.REMOVE_SONG,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
@@ -250,6 +270,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
@@ -267,6 +288,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.DELETE_LIST,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
@@ -284,6 +306,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : payload,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: null,
                     playingList: store.playingList,
@@ -301,9 +324,28 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
+                    currentSort : store.currentSort,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     playingList: payload,
+                    currentSongIndex: -1,
+                    currentSong: null,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    listIdMarkedForDeletion: null,
+                    listMarkedForDeletion: null,
+                    errorMessage: "",
+                    allPlaylists: store.allPlaylists
+                });
+            }
+            case GlobalStoreActionType.SET_SORT_TYPE: {
+                return setStore({
+                    currentModal : CurrentModal.NONE,
+                    currentView : store.currentView,
+                    currentSort : payload,
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    playingList: store.playingList,
                     currentSongIndex: -1,
                     currentSong: null,
                     newListCounter: store.newListCounter,
@@ -397,6 +439,7 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                pairsArray.sort(store.comparator(store.getSortType()))
                 let allLists = response.data.playlists;
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
@@ -411,6 +454,54 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncLoadIdNamePairs();
+    }
+
+    store.comparator = function (pred) {
+        let func = function (a,b) {
+            if(pred(a,b)) return 1
+            if(pred(b,a)) return -1
+            return 0
+        }
+        return func
+    }
+
+    store.getSortType = function() {
+        console.log("CURRENT SORT:")
+        console.log(store.currentSort)
+        if(store.currentSort === CurrentSort.PUBLISH_DATE) {
+            return ((a,b) => a.name > b.name);
+        }
+        if(store.currentSort === CurrentSort.NAME) {
+            return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
+        }
+        return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
+    }
+
+    store.setSortType = function(id) {
+        let sortType = CurrentSort.PUBLISH_DATE;
+        if(id === 0) {
+            console.log("SET TO NAME 2")
+            sortType = CurrentSort.NAME;
+        }
+        if(id === 1) {
+            console.log("SET TO DATE")
+        }
+        if(id === 2) {
+            sortType = CurrentSort.LISTENS;
+        }
+        if(id === 3) {
+            sortType = CurrentSort.LIKES;
+        }
+        if(id === 4) {
+            sortType = CurrentSort.DISLIKES;
+        }
+        storeReducer({
+            type: GlobalStoreActionType.SET_SORT_TYPE,
+            payload: sortType
+        });
+        console.log(store.currentSort)
+        console.log(sortType)
+        store.loadIdNamePairs();
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
