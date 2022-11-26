@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -49,14 +50,61 @@ const buttonStyleDisabled = {
     cursor: 'default'
 }
 
-function EditToolbar() {
+function EditToolbar(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const { published, email } = props;
+    let isPublished = Boolean(published);
+    let isOwner = Boolean(auth.user.email === email)
 
     function handleUndo() {
         store.undo();
     }
     function handleRedo() {
         store.redo();
+    }
+
+    let undoButton = ""
+    let redoButton = ""
+    let publishButton = ""
+    if(!isPublished && isOwner) {
+        undoButton = 
+        <Box
+        id='undo-button'
+        onClick={handleUndo}
+        style={(!store.canUndo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
+        Undo
+        </Box>
+
+        redoButton =
+        <Box
+        id='redo-button'
+        onClick={handleRedo}
+        style={(!store.canRedo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
+        Redo
+        </Box>
+
+        publishButton = 
+        <Box
+        id='publish-button'
+        style={buttonStyle}
+        >
+        Publish
+        </Box>
+    }
+
+    let deleteButton = ""
+    if(isOwner) {
+        deleteButton =
+        <Box
+        id='delete-list-button'
+        style={buttonStyle}
+        onClick={(event) => {
+            handleDeleteList(event, store.currentList._id)
+        }}
+        >
+        Delete
+        </Box>
     }
 
     async function handleDeleteList(event, id) {
@@ -69,40 +117,17 @@ function EditToolbar() {
     return (
         <Grid container spacing={0.7}>
             <Grid item xs={2} md={2}>
-                <Box
-                    id='undo-button'
-                    onClick={handleUndo}
-                    style={(!store.canUndo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
-                    Undo
-                </Box>
+                {undoButton}
             </Grid>
             <Grid item xs={2} md={2}>
-                <Box
-                    id='redo-button'
-                    onClick={handleRedo}
-                    style={(!store.canRedo() || store.modalOpen()) ? buttonStyleDisabled : buttonStyle}>
-                    Redo
-                </Box>
+                {redoButton}
             </Grid>
             <Grid item xs={2} md={2}></Grid>
             <Grid item xs={2} md={2}>
-                <Box
-                id='publish-button'
-                style={buttonStyle}
-                >
-                    Publish
-                </Box>
+                {publishButton}
             </Grid>
             <Grid item xs={2} md={2}>
-                <Box
-                id='delete-list-button'
-                style={buttonStyle}
-                onClick={(event) => {
-                    handleDeleteList(event, store.currentList._id)
-                }}
-                >
-                    Delete
-                </Box>
+                {deleteButton}
             </Grid>
             <Grid item xs={2} md={2}>
                 <Box 

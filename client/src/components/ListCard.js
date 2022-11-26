@@ -154,6 +154,19 @@ function ListCard(props) {
         setText(event.target.value);
     }
 
+    let addSongCard = 
+        <Box 
+            style={songCardStyle} 
+            className="list-card unselected-list-card"
+            disabled={!store.canAddNewSong() || store.modalOpen()}
+            onClick={handleAddNewSong}
+        >
+            <AddIcon/>
+        </Box>
+    if(published) {
+        addSongCard = ""
+    }
+
     let selectClass = "unselected-list-card";
     if (selected) {
         selectClass = "selected-list-card";
@@ -252,19 +265,12 @@ function ListCard(props) {
                                 />
                             ))  
                         }
-                        <Box 
-                        style={songCardStyle} 
-                        className="list-card unselected-list-card"
-                        disabled={!store.canAddNewSong() || store.modalOpen()}
-                        onClick={handleAddNewSong}
-                        >
-                            <AddIcon/>
-                        </Box>
+                        { addSongCard }
                         </List> 
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                    <EditToolbar/>
+                    <EditToolbar published={published} email={idNamePair.playlist.ownerEmail}/>
                 </Grid>
                 <Grid item xs={8} md={8}>
                     <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
