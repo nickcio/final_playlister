@@ -465,14 +465,56 @@ function GlobalStoreContextProvider(props) {
         return func
     }
 
+    store.getSortTypeAlt = function(sortType) {
+        console.log("CURRENT SORT:")
+        console.log(sortType)
+        if(sortType === CurrentSort.PUBLISH_DATE) {
+            let publishD = function (a,b) {
+                if(a.publishDate && b.publishDate) {
+                    return Date.parse(a.publishDate) > Date.parse(b.publishDate)
+                }
+                if(a.publishDate) {
+                    return 1;
+                }
+                if(b.publishDate) {
+                    return -1;
+                }
+                return Date.parse(a.createdAt) > Date.parse(b.createdAt)
+            }
+            return publishD;
+        }
+        if(sortType === CurrentSort.NAME) {
+            return ((a,b) => a.name.toLowerCase() > b.name.toLowerCase());
+        }
+        if(sortType === CurrentSort.LISTENS) {
+            return ((a,b) => a.listens < b.listens);
+        }
+        if(sortType === CurrentSort.LIKES) {
+            return ((a,b) => a.likes < b.likes);
+        }
+        if(sortType === CurrentSort.DISLIKES) {
+            return ((a,b) => a.dislikes < b.dislikes);
+        }
+        return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
+    }
+
     store.getSortType = function() {
         console.log("CURRENT SORT:")
         console.log(store.currentSort)
         if(store.currentSort === CurrentSort.PUBLISH_DATE) {
-            return ((a,b) => a.name > b.name);
+            return ((a,b) => a.createdAt > b.createdAt);
         }
         if(store.currentSort === CurrentSort.NAME) {
-            return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
+            return ((a,b) => a.name.toLowerCase() > b.name.toLowerCase());
+        }
+        if(store.currentSort === CurrentSort.LISTENS) {
+            return ((a,b) => a.listens < b.listens);
+        }
+        if(store.currentSort === CurrentSort.LIKES) {
+            return ((a,b) => a.likes < b.likes);
+        }
+        if(store.currentSort === CurrentSort.DISLIKES) {
+            return ((a,b) => a.dislikes < b.dislikes);
         }
         return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
     }
@@ -501,7 +543,25 @@ function GlobalStoreContextProvider(props) {
         });
         console.log(store.currentSort)
         console.log(sortType)
-        store.loadIdNamePairs();
+        async function asyncLoadIdNamePairs() {
+            const response = await api.getPlaylistPairs();
+            if (response.data.success) {
+                let pairsArray = response.data.idNamePairs;
+                pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
+                let allLists = response.data.playlists;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: {
+                        idNamePairs: pairsArray,
+                        playlists: allLists
+                    }
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        asyncLoadIdNamePairs();
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
