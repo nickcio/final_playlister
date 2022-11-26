@@ -13,6 +13,20 @@ import Box from '@mui/system/Box';
     
     @author McKilla Gorilla
 */
+const statusStyle = {
+        position: 'absolute',
+        left: '0%',
+        top: '0%',
+        width: '100%',
+        height: '10%',
+        backgroundColor: 'black',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '36pt',
+        color: 'white'
+}
+
 function Statusbar() {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
@@ -42,10 +56,19 @@ function Statusbar() {
     else {
         text = "";
     }
+
+    let sBar = "";
+    if(auth.loggedIn) {
+        sBar = <Box id='playlister-statusbar'>
+        { text }
+    </Box>
+    }
+
     return (
-        <Box id="playlister-statusbar">
-            { text }
+        <Box>
+            {sBar}
         </Box>
+        
     );
 }
 

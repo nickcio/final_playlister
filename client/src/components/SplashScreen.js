@@ -4,8 +4,9 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom'
 
 const buttonStyle = {
-    width: '100%', 
-    height: '50%',
+    width: '150px', 
+    height: '50px',
+    marginLeft: '50px',
     fontSize: '10pt', 
     backgroundColor: '#6cc0f5', 
     borderStyle: 'solid', 
@@ -23,7 +24,7 @@ const buttonStyle = {
 export default function SplashScreen() {
     return (
         <Grid container spacing={0} id="splash-screen">
-            <Grid item xs={2} md={12}>
+            <Grid item xs={2} md={12} sx={{mt:10}}>
                 <Typography style={{fontSize: '18pt', fontStyle: 'italic'}}>Welcome To</Typography>
                 <Typography style={{fontSize: '5vw', fontStyle: 'italic'}}>Playlister</Typography>
                 <Typography style={{fontSize: '18pt' }}>Playlister: The number one place to create, edit, and play playlists!<br/>Add your favorite songs and share them with others!</Typography>
@@ -39,6 +40,10 @@ export default function SplashScreen() {
             <Grid item xs={2} md={1}></Grid>
             <Grid item xs={2} md={2}>
                 <Box style={buttonStyle}>Continue as Guest</Box>
+            </Grid>
+            <Grid item xs={2} md={2}></Grid>
+            <Grid item xs={2} md={2}>
+            <Typography sx={{mt:35}} style={{fontSize: '12pt', fontStyle: 'italic'}}>Nicholas Ciotoli, 2022</Typography>
             </Grid>
         </Grid>
     )

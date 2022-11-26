@@ -114,7 +114,8 @@ function ListCard(props) {
         }
     }
 
-    function handleAddNewSong() {
+    function handleAddNewSong(event) {
+        event.stopPropagation();
         store.addNewSong();
     }
 

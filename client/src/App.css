@@ -58,16 +58,13 @@ body {
   background-image: linear-gradient(to bottom, #94a1e3, #224198);
   color: black;
   font-size: 5vw;
-  border-color: black;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 10px;
   padding-left: 0%;
   padding-top: 2%;
-  padding-bottom: 5%;
-  height:80%;
+  padding-bottom: 0%;
+  height:100%;
   text-align: center;
   vertical-align: center;
+  overflow: hidden;
 }
 
 #edit-toolbar {

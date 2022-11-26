@@ -13,12 +13,34 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
+import { TextField } from '@mui/material';
+import SortIcon from '@mui/icons-material/Sort';
+
+const size = {
+    transform:"scale(1.8)",
+    marginRight:'40px'
+}
+
+const textF = {
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'center',
+    backgroundColor:"white",
+    borderRadius:3,
+    color:'grey',
+    maxHeight:'50%'
+}
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
+    const [anchorSortEl, setAnchorSortEl] = useState(null);
+    const isSortOpen = Boolean(anchorSortEl);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -26,6 +48,14 @@ export default function AppBanner() {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleSortMenuOpen = (event) => {
+        setAnchorSortEl(event.currentTarget);
+    }
+
+    const handleSortMenuClose = () => {
+        setAnchorSortEl(null);
     };
 
     const handleLogout = () => {
@@ -75,6 +105,34 @@ export default function AppBanner() {
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>        
 
+    const sortMenuId = "sort-menu"
+    const sortMenu =
+        <Menu
+            anchorSortEl={anchorSortEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={sortMenuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            style={{
+                transform: 'translateX(-1%) translateY(15%)'
+            }}
+            open={isSortOpen}
+            onClose={handleSortMenuClose}
+        >
+            <MenuItem>Name (A-Z)</MenuItem>
+            <MenuItem>Publish Date (Newest)</MenuItem>
+            <MenuItem>Listens (High-Low)</MenuItem>
+            <MenuItem>Likes (High-Low)</MenuItem>
+            <MenuItem>Dislikes (High-Low)</MenuItem>
+        </Menu>
+
+
     let editToolbar = "";
     let menu = loggedOutMenu;
     if (auth.loggedIn) {
@@ -90,42 +148,79 @@ export default function AppBanner() {
             return <AccountCircle />;
     }
 
-    return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography                        
-                        variant="h4"
-                        noWrap
-                        component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}                        
-                    >
-                        Playlister
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            { getAccountMenu(auth.loggedIn) }
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-                <Toolbar
-                style={{backgroundColor: 'black'}}
+    let wholeBanner = "";
+    if (auth.loggedIn) {
+        wholeBanner = <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+            <Toolbar>
+                <Typography                        
+                    variant="h4"
+                    noWrap
+                    component="div"
+                    sx={{ display: { xs: 'none', sm: 'block' } }}                        
                 >
-                    Bogus
-                </Toolbar>
-            </AppBar>
-            {
-                menu
-            }
+                    Playlister
+                </Typography>
+                <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
+                <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <IconButton
+                        size="large"
+                        edge="end"
+                        aria-label="account of current user"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                    >
+                        { getAccountMenu(auth.loggedIn) }
+                    </IconButton>
+                </Box>
+            </Toolbar>
+            <Toolbar
+            style={{backgroundColor: 'black'}}
+            >
+                <Box>
+                    <HomeIcon sx={size}/>
+                </Box>
+                <Box>
+                    <GroupsIcon sx={size}/>
+                </Box>
+                <Box>
+                    <PersonIcon sx={size}/>
+                </Box>
+                <TextField style={textF} label="Search" fullWidth>
+                    Genus
+                </TextField>
+                <Box sx={{marginLeft:'50px', width:'50px'}}>
+                    SORT BY
+                </Box>
+                <Box>
+                    <IconButton
+                        size="large"
+                        edge="end"
+                        aria-label="sort menu"
+                        aria-controls={sortMenuId}
+                        aria-haspopup="true"
+                        onClick={handleSortMenuOpen}
+                        color="inherit"
+                    >
+                        <SortIcon sx={size}/>
+                    </IconButton>
+                </Box>
+            </Toolbar>
+        </AppBar>
+        {
+            menu
+        }
+        {
+            sortMenu
+        }
+    </Box>;
+    }
+
+    return (
+        <Box>
+            {wholeBanner}
         </Box>
     );
 }

@@ -22,7 +22,7 @@ import {
   Hi
   @author McKilla Gorilla
 */
-const App = () => {   
+const App = () => {  
     return (
         <BrowserRouter>
             <AuthContextProvider>
