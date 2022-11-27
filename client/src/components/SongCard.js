@@ -16,7 +16,7 @@ const cardStyle = {
 function SongCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [ draggedTo, setDraggedTo ] = useState(0);
-    const { song, index } = props;
+    const { song, index, published } = props;
 
     function handleDragStart(event) {
         event.dataTransfer.setData("song", index);
@@ -76,18 +76,15 @@ function SongCard(props) {
                     {index + 1}.
                 </Grid>
                 <Grid item xs={10} md={10}>
-                    <a
-                        id={'song-' + index + '-link'}
-                        className="song-link"
-                        href={"https://www.youtube.com/watch?v=" + song.youTubeId}>
                         {song.title} by {song.artist}
-                    </a>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Box >
+                        { published ? "" :
                         <IconButton onClick={handleRemoveSong} aria-label='edit'>
                             <CloseIcon style={{ fontSize:'14pt', color:'white'}} />
                         </IconButton>
+                        }
                     </Box>
                 </Grid>
             </Grid>

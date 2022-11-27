@@ -60,7 +60,9 @@ const CurrentSort = {
     PUBLISH_DATE: "PUBLISH_DATE",
     LISTENS: "LISTENS",
     LIKES: "LIKES",
-    DISLIKES: "DISLIKES"
+    DISLIKES: "DISLIKES",
+    CREATED: "CREATED",
+    EDITED: "EDITED"
 }
 
 // WITH THIS WE'RE MAKING OUR GLOBAL DATA STORE
@@ -414,6 +416,8 @@ function GlobalStoreContextProvider(props) {
         let newListName = "Untitled" + store.newListCounter;
         console.log("USERNAME")
         console.log(auth.user)
+        console.log("SORT AT BEGINNING OF CREATE")
+        console.log(store.currentSort)
         const response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
@@ -426,6 +430,8 @@ function GlobalStoreContextProvider(props) {
             );
 
             store.loadIdNamePairs();
+            console.log("SORT TYPE AFTER MAKING NEW LIST:")
+            console.log(store.currentSort)
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
         }
         else {
@@ -435,11 +441,13 @@ function GlobalStoreContextProvider(props) {
 
     store.publishList = function (id) {
         console.log("PUBLISHING")
+        console.log(store.currentSort)
         async function asyncPublish(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
-                playlist.publishDate = (new Date()).toISOString();
+                playlist.published = {isPublished: true, publishDate: (new Date()).toISOString()};
+                console.log(playlist)
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
@@ -465,6 +473,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncPublish(id);
+        store.loadIdNamePairs();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -473,7 +482,29 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
-                pairsArray.sort(store.comparator(store.getSortType()))
+                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                let allLists = response.data.playlists;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: {
+                        idNamePairs: pairsArray,
+                        playlists: allLists
+                    }
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        asyncLoadIdNamePairs();
+    }
+
+    store.loadIdNamePairsSorted = function (sortType) {
+        async function asyncLoadIdNamePairs() {
+            const response = await api.getPlaylistPairs();
+            if (response.data.success) {
+                let pairsArray = response.data.idNamePairs;
+                pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
                 let allLists = response.data.playlists;
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
@@ -504,16 +535,23 @@ function GlobalStoreContextProvider(props) {
         console.log(sortType)
         if(sortType === CurrentSort.PUBLISH_DATE) {
             let publishD = function (a,b) {
-                if(a.publishDate && b.publishDate) {
-                    return Date.parse(a.publishDate) > Date.parse(b.publishDate)
+                if(a.playlist.published.isPublished && b.playlist.published.isPublished) {
+                    let aInt = Date.parse(a.playlist.published.publishDate);
+                    let bInt = Date.parse(b.playlist.published.publishDate);
+                    console.log("AINT VS BINT")
+                    console.log(aInt)
+                    console.log(bInt)
+                    return aInt < bInt
                 }
-                if(a.publishDate) {
-                    return 1;
+                if(a.playlist.published) {
+                    let aInt = Date.parse(a.playlist.published.publishDate);
+                    return 0 > aInt;
                 }
-                if(b.publishDate) {
-                    return -1;
+                if(b.playlist.published) {
+                    let bInt = Date.parse(b.playlist.published.publishDate);
+                    return 0 > bInt;
                 }
-                return Date.parse(a.createdAt) > Date.parse(b.createdAt)
+                return Date.parse(a.playlist.createdAt) < Date.parse(b.playlist.createdAt)
             }
             return publishD;
         }
@@ -521,13 +559,13 @@ function GlobalStoreContextProvider(props) {
             return ((a,b) => a.name.toLowerCase() > b.name.toLowerCase());
         }
         if(sortType === CurrentSort.LISTENS) {
-            return ((a,b) => a.listens < b.listens);
+            return ((a,b) => a.playlist.listens < b.playlist.listens);
         }
         if(sortType === CurrentSort.LIKES) {
-            return ((a,b) => a.likes < b.likes);
+            return ((a,b) => a.playlist.likes < b.playlist.likes);
         }
         if(sortType === CurrentSort.DISLIKES) {
-            return ((a,b) => a.dislikes < b.dislikes);
+            return ((a,b) => a.playlist.dislikes < b.playlist.dislikes);
         }
         return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
     }
@@ -535,34 +573,7 @@ function GlobalStoreContextProvider(props) {
     store.getSortType = function() {
         console.log("CURRENT SORT:")
         console.log(store.currentSort)
-        if(store.currentSort === CurrentSort.PUBLISH_DATE) {
-            let publishD = function (a,b) {
-                if(a.publishDate && b.publishDate) {
-                    return Date.parse(a.publishDate) > Date.parse(b.publishDate)
-                }
-                if(a.publishDate) {
-                    return 1;
-                }
-                if(b.publishDate) {
-                    return -1;
-                }
-                return Date.parse(a.createdAt) > Date.parse(b.createdAt)
-            }
-            return publishD;
-        }
-        if(store.currentSort === CurrentSort.NAME) {
-            return ((a,b) => a.name.toLowerCase() > b.name.toLowerCase());
-        }
-        if(store.currentSort === CurrentSort.LISTENS) {
-            return ((a,b) => a.listens < b.listens);
-        }
-        if(store.currentSort === CurrentSort.LIKES) {
-            return ((a,b) => a.likes < b.likes);
-        }
-        if(store.currentSort === CurrentSort.DISLIKES) {
-            return ((a,b) => a.dislikes < b.dislikes);
-        }
-        return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
+        return store.getSortTypeAlt(store.currentSort)
     }
 
     store.setSortType = function(id) {

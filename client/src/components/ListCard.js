@@ -47,10 +47,38 @@ const cardStyleOpen = {
     cursor: 'default'
 }
 
+const publishedCardStyle = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#c8c8fa', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 1, 
+    borderColor: '#000000'
+}
+
+const publishedCardStyleOpen = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#c8c8fa', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 1, 
+    borderColor: '#000000',
+    cursor: 'default'
+}
+
 const inCard = {
     width: '100%', 
     fontSize: '18pt', 
     backgroundColor: '#94a1e3'
+}
+
+const publishInCard = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#1f1f78',
+    color: '#c8c8fa'
 }
 
 const songCardStyle = {
@@ -71,7 +99,7 @@ function ListCard(props) {
     const [listOpen, setListOpen] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
-    let published = false;
+    let published = idNamePair.playlist.published.isPublished;
 
     let userName = ""
     if(idNamePair.playlist.userName){
@@ -91,11 +119,11 @@ function ListCard(props) {
     }
     let publishDate = "";
     console.log(idNamePair.playlist)
-    if(idNamePair.playlist.publishDate){
+    if(idNamePair.playlist.published.publishDate){
         console.log("THIS LIST IS PUBLISHED")
         console.log(idNamePair.playlist.publishDate);
         published = true;
-        publishDate = idNamePair.playlist.publishDate;
+        publishDate = (new Date(idNamePair.playlist.published.publishDate)).toDateString().substring(3);
     }
 
 
@@ -127,8 +155,10 @@ function ListCard(props) {
     }
 
     function handleToggleEdit(event) {
-        event.stopPropagation();
-        toggleEdit();
+        if(!published) {
+            event.stopPropagation();
+            toggleEdit();
+        }
     }
 
     function toggleEdit() {
@@ -169,6 +199,25 @@ function ListCard(props) {
     if(published) {
         addSongCard = ""
     }
+    let cardsList = ""
+    if(store.currentList) {
+        cardsList =
+        store.currentList.songs.map((song, index) => (
+            <SongCard
+                id={'playlist-song-' + (index)}
+                key={'playlist-song-' + (index)}
+                index={index}
+                song={song}
+                published={published}
+            />
+        ))
+    if(published) {
+        cardsList =
+        store.currentList.songs.map((song, index) => (
+            <Typography sx={{ml:2}}>{index + 1}. {song.title} by {song.artist}</Typography>
+        ))
+    }
+    }
 
     let selectClass = "unselected-list-card";
     if (selected) {
@@ -183,7 +232,7 @@ function ListCard(props) {
             id={idNamePair._id}
             key={idNamePair._id}
             sx={{ marginTop: '15px', display: 'flex', p: 1 }}
-            style={cardStyle}
+            style={published ? publishedCardStyle : cardStyle }
             button
             onDoubleClick={handleToggleEdit}
         >
@@ -195,22 +244,22 @@ function ListCard(props) {
                 <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography sx={{ fontSize:'10pt' }}>{published ? likes : ""}</Typography>
+                <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography sx={{ fontSize:'10pt' }}>{published ? dislikes : ""}</Typography>
+                <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>
             </Grid>
             <Grid item xs={12} md={12}>
                 <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
             </Grid>
             <Grid item xs={8} md={8}>
-                <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
+                <Typography sx={{ mt: 2, fontSize:'10pt', fontWeight:'bold' }}>{published ? "Published:" : ""} {publishDate}</Typography>
             </Grid>
             <Grid item xs={3} md={3}>
-                <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
+                <Typography sx={{ mt: 2, fontSize:'10pt', fontWeight:'bold' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Box >
@@ -229,7 +278,7 @@ function ListCard(props) {
                 id={idNamePair._id}
                 key={idNamePair._id}
                 sx={{ height: '30rem', marginTop: '15px', p: 1 }}
-                style={cardStyleOpen}
+                style={published ? publishedCardStyleOpen : cardStyleOpen}
                 button
                 className='list-container'
             >
@@ -241,32 +290,25 @@ function ListCard(props) {
                     <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography sx={{ fontSize:'10pt' }}>{published ? likes : ""}</Typography>
+                    <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography sx={{ fontSize:'10pt' }}>{published ? dislikes : ""}</Typography>
+                    <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>
                 </Grid>
                 <Grid item xs={12} md={12}>
                     <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
                 </Grid>
                 <Grid item xs={12} md={12} sx={{ mt: 44}}>
-                    <Box className="inside-list" style={inCard}>
+                    <Box className="inside-list" style={published ? publishInCard : inCard}>
                         <List 
                         id="playlist-cards" 
                         sx={{ width: '100%' }}
                         >
                         {
-                            store.currentList.songs.map((song, index) => (
-                                <SongCard
-                                    id={'playlist-song-' + (index)}
-                                    key={'playlist-song-' + (index)}
-                                    index={index}
-                                    song={song}
-                                />
-                            ))  
+                            cardsList
                         }
                         { addSongCard }
                         </List> 
@@ -276,10 +318,10 @@ function ListCard(props) {
                     <EditToolbar id={idNamePair._id} published={published} email={idNamePair.playlist.ownerEmail}/>
                 </Grid>
                 <Grid item xs={8} md={8}>
-                    <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Published:" : ""} {publishDate}</Typography>
+                    <Typography sx={{ mt: 2, fontSize:'10pt', fontWeight:'bold' }}>{published ? "Published:" : ""} {publishDate}</Typography>
                 </Grid>
                 <Grid item xs={3} md={3}>
-                    <Typography sx={{ mt: 2, fontSize:'10pt' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
+                    <Typography sx={{ mt: 2, fontSize:'10pt', fontWeight:'bold' }}>{published ? "Listens:" : ""} {published ? listens : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Box >
