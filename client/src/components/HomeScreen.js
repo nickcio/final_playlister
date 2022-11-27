@@ -47,10 +47,11 @@ const HomeScreen = () => {
 
     let listCard = "";
     if (store) {
+        let newList = store.idNamePairs
         listCard = 
             <List sx={{ width: '90%', left: '5%'}}>
             {
-                store.idNamePairs.map((pair) => (
+                newList.map((pair) => (
                     <ListCard
                         key={pair._id}
                         idNamePair={pair}

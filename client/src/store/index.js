@@ -72,7 +72,7 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         currentModal : CurrentModal.NONE,
         currentView : CurrentView.HOME_SCREEN,
-        currentSort : CurrentSort.PUBLISH_DATE,
+        currentSort : CurrentSort.CREATED,
         idNamePairs: [],
         currentList: null,
         playingList: null,
@@ -86,6 +86,7 @@ function GlobalStoreContextProvider(props) {
         allPlaylists: []
     });
     const history = useHistory();
+    const [lastSort, setLastSort] = useState(CurrentSort.CREATED);
 
     console.log("inside useGlobalStore");
 
@@ -142,8 +143,8 @@ function GlobalStoreContextProvider(props) {
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
                     currentSort : store.currentSort,
-                    idNamePairs: store.idNamePairs,
-                    currentList: payload,
+                    idNamePairs: payload.idNamePairs,
+                    currentList: payload.currentList,
                     playingList: store.playingList,
                     currentSongIndex: -1,
                     currentSong: null,
@@ -344,8 +345,8 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     currentModal : CurrentModal.NONE,
                     currentView : store.currentView,
-                    currentSort : payload,
-                    idNamePairs: store.idNamePairs,
+                    currentSort : payload.currentSort,
+                    idNamePairs: payload.idNamePairs,
                     currentList: store.currentList,
                     playingList: store.playingList,
                     currentSongIndex: -1,
@@ -355,11 +356,12 @@ function GlobalStoreContextProvider(props) {
                     listIdMarkedForDeletion: null,
                     listMarkedForDeletion: null,
                     errorMessage: "",
-                    allPlaylists: store.allPlaylists
+                    allPlaylists: payload.allPlaylists
                 });
             }
             default:
                 return store;
+
         }
     }
 
@@ -370,6 +372,8 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {
         // GET THE LIST
+        console.log("RENAMING")
+        console.log(store.currentSort)
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
@@ -382,6 +386,7 @@ function GlobalStoreContextProvider(props) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 let allLists = response.data.playlists;
                                 storeReducer({
                                     type: GlobalStoreActionType.CHANGE_LIST_NAME,
@@ -418,18 +423,28 @@ function GlobalStoreContextProvider(props) {
         console.log(auth.user)
         console.log("SORT AT BEGINNING OF CREATE")
         console.log(store.currentSort)
-        const response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0);
+        let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
             tps.clearAllTransactions();
             let newList = response.data.playlist;
-            storeReducer({
-                type: GlobalStoreActionType.CREATE_NEW_LIST,
-                payload: newList
+            async function getListPairs(playlist) {
+                response = await api.getPlaylistPairs();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+                    pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                    let allLists = response.data.playlists;
+                    console.log(allLists)
+                    storeReducer({
+                        type: GlobalStoreActionType.CREATE_NEW_LIST,
+                        payload: {
+                            idNamePairs: pairsArray,
+                            currentList: playlist
+                        }
+                    });
+                }
             }
-            );
-
-            store.loadIdNamePairs();
+            getListPairs(newList);
             console.log("SORT TYPE AFTER MAKING NEW LIST:")
             console.log(store.currentSort)
             // IF IT'S A VALID LIST THEN LET'S START EDITING IT
@@ -455,6 +470,7 @@ function GlobalStoreContextProvider(props) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 let allLists = response.data.playlists;
                                 console.log(allLists)
                                 storeReducer({
@@ -473,7 +489,6 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncPublish(id);
-        store.loadIdNamePairs();
     }
 
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -484,6 +499,8 @@ function GlobalStoreContextProvider(props) {
                 let pairsArray = response.data.idNamePairs;
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                 let allLists = response.data.playlists;
+                console.log("CURRENT SORT NOW BEFORE LOAD::")
+                console.log(store.currentSort)
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: {
@@ -491,28 +508,8 @@ function GlobalStoreContextProvider(props) {
                         playlists: allLists
                     }
                 });
-            }
-            else {
-                console.log("API FAILED TO GET THE LIST PAIRS");
-            }
-        }
-        asyncLoadIdNamePairs();
-    }
-
-    store.loadIdNamePairsSorted = function (sortType) {
-        async function asyncLoadIdNamePairs() {
-            const response = await api.getPlaylistPairs();
-            if (response.data.success) {
-                let pairsArray = response.data.idNamePairs;
-                pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
-                let allLists = response.data.playlists;
-                storeReducer({
-                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                    payload: {
-                        idNamePairs: pairsArray,
-                        playlists: allLists
-                    }
-                });
+                console.log("CURRENT SORT NOW AFTER LOAD::")
+                console.log(store.currentSort)
             }
             else {
                 console.log("API FAILED TO GET THE LIST PAIRS");
@@ -531,16 +528,18 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.getSortTypeAlt = function(sortType) {
-        console.log("CURRENT SORT:")
+        console.log("CURRENT SORT TYPE AFTER CALLING:")
         console.log(sortType)
+        if(!sortType) {
+            console.log("UNDEFINED DETECTED!")
+            sortType= lastSort;
+            console.log(lastSort)
+        }
         if(sortType === CurrentSort.PUBLISH_DATE) {
             let publishD = function (a,b) {
                 if(a.playlist.published.isPublished && b.playlist.published.isPublished) {
                     let aInt = Date.parse(a.playlist.published.publishDate);
                     let bInt = Date.parse(b.playlist.published.publishDate);
-                    console.log("AINT VS BINT")
-                    console.log(aInt)
-                    console.log(bInt)
                     return aInt < bInt
                 }
                 if(a.playlist.published) {
@@ -566,6 +565,12 @@ function GlobalStoreContextProvider(props) {
         }
         if(sortType === CurrentSort.DISLIKES) {
             return ((a,b) => a.playlist.dislikes < b.playlist.dislikes);
+        }
+        if(sortType === CurrentSort.CREATED) {
+            return ((a,b) => Date.parse(a.playlist.createdAt) > Date.parse(b.playlist.createdAt))
+        }
+        if(sortType === CurrentSort.EDITED) {
+            return ((a,b) => Date.parse(a.playlist.updatedAt) < Date.parse(b.playlist.updatedAt))
         }
         return ((a,b) => a.name.toLowerCase() < b.name.toLowerCase());
     }
@@ -594,23 +599,31 @@ function GlobalStoreContextProvider(props) {
         if(id === 4) {
             sortType = CurrentSort.DISLIKES;
         }
-        storeReducer({
-            type: GlobalStoreActionType.SET_SORT_TYPE,
-            payload: sortType
-        });
+        if(id === 5) {
+            sortType = CurrentSort.CREATED;
+        }
+        if(id === 6) {
+            sortType = CurrentSort.EDITED;
+        }
+        console.log("SETTING LASTSORT TO")
+        console.log(sortType)
+        setLastSort(sortType);
         console.log(store.currentSort)
         console.log(sortType)
         async function asyncLoadIdNamePairs() {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                console.log("WHAT SORT TYPE IS BEFORE CALLING")
+                console.log(sortType)
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
                 let allLists = response.data.playlists;
                 storeReducer({
-                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    type: GlobalStoreActionType.SET_SORT_TYPE,
                     payload: {
-                        idNamePairs: pairsArray,
-                        playlists: allLists
+                        sortType : sortType,
+                        idNamePairs : pairsArray,
+                        allPlaylists : allLists
                     }
                 });
             }
@@ -619,6 +632,12 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncLoadIdNamePairs();
+        console.log("SORT AFTER SORT TYPE::")
+        console.log(store.currentSort)
+        console.log("LASTSORT IS")
+        console.log(lastSort)
+        console.log("IT SHOULD BE:")
+        console.log(sortType)
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
@@ -689,6 +708,10 @@ function GlobalStoreContextProvider(props) {
     }
     store.isRemoveSongModalOpen = () => {
         return store.currentModal === CurrentModal.REMOVE_SONG;
+    }
+
+    store.isInHome = () => {
+        return store.currentView === CurrentView.HOME_SCREEN;
     }
     // THE FOLLOWING 8 FUNCTIONS ARE FOR COORDINATING THE UPDATING
     // OF A LIST, WHICH INCLUDES DEALING WITH THE TRANSACTION STACK. THE

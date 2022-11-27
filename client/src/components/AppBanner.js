@@ -41,6 +41,7 @@ export default function AppBanner() {
     const isMenuOpen = Boolean(anchorEl);
     const [anchorSortEl, setAnchorSortEl] = useState(null);
     const isSortOpen = Boolean(anchorSortEl);
+    const inHome = Boolean(store.isInHome());
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -82,6 +83,16 @@ export default function AppBanner() {
     const handleSortDislike = () => {
         handleSortMenuClose();
         store.setSortType(4);
+    }
+
+    const handleSortCreated = () => {
+        handleSortMenuClose();
+        store.setSortType(5);
+    }
+
+    const handleSortEdited = () => {
+        handleSortMenuClose();
+        store.setSortType(6);
     }
 
     const handleLogout = () => {
@@ -132,7 +143,7 @@ export default function AppBanner() {
         </Menu>        
 
     const sortMenuId = "sort-menu"
-    const sortMenu =
+    const sortMenuLists =
         <Menu
             anchorEl={anchorSortEl}
             anchorOrigin={{
@@ -157,6 +168,33 @@ export default function AppBanner() {
             <MenuItem onClick={handleSortLike}>Likes (High-Low)</MenuItem>
             <MenuItem onClick={handleSortDislike}>Dislikes (High-Low)</MenuItem>
         </Menu>
+    const sortMenuHome = 
+            <Menu
+            anchorEl={anchorSortEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={sortMenuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            style={{
+                transform: 'translateY(5%)'
+            }}
+            open={isSortOpen}
+            onClose={handleSortMenuClose}
+        >
+            <MenuItem onClick={handleSortName}>Name (A-Z)</MenuItem>
+            <MenuItem onClick={handleSortCreated}>Creation Date (Old-New)</MenuItem>
+            <MenuItem onClick={handleSortEdited}>Last Edit Date (New-Old)</MenuItem>
+        </Menu>
+    let sortMenu = sortMenuLists
+    if(inHome) {
+        sortMenu = sortMenuHome
+    }
 
 
     let editToolbar = "";

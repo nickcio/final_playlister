@@ -118,10 +118,7 @@ function ListCard(props) {
         listens = idNamePair.playlist.listen;
     }
     let publishDate = "";
-    console.log(idNamePair.playlist)
     if(idNamePair.playlist.published.publishDate){
-        console.log("THIS LIST IS PUBLISHED")
-        console.log(idNamePair.playlist.publishDate);
         published = true;
         publishDate = (new Date(idNamePair.playlist.published.publishDate)).toDateString().substring(3);
     }
