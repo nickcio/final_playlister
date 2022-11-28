@@ -370,10 +370,12 @@ function GlobalStoreContextProvider(props) {
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
-    store.changeListName = function (id, newName) {
+    store.changeListName = async function (id, newName) {
         // GET THE LIST
         console.log("RENAMING")
         console.log(store.currentSort)
+        let exists = await api.getPlaylistByName(newName,auth.user.email);
+        if(!exists.data.success){
         async function asyncChangeListName(id) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
@@ -404,6 +406,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncChangeListName(id);
+        }
     }
 
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
@@ -414,6 +417,15 @@ function GlobalStoreContextProvider(props) {
         });
         tps.clearAllTransactions();
         history.push("/");
+    }
+
+    store.checkForList = async function (name) {
+        let exists = await api.getPlaylistByName(name,auth.user.email)
+        console.log("EXISTS?" + exists.data.success)
+        if(exists.data.success) {
+            console.log(exists.data.playlist)
+        }
+        return exists.data.success
     }
 
     // THIS FUNCTION CREATES A NEW LIST
