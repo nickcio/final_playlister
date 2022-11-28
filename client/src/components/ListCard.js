@@ -115,6 +115,7 @@ function ListCard(props) {
     const [labelName, setLabelName] = useState("Playlist Name")
     const [textStyle, setTextStyle] = useState(textFieldGood)
     let published = idNamePair.playlist.published.isPublished;
+    let listId = idNamePair.playlist._id
 
     let userName = ""
     if(idNamePair.playlist.userName){

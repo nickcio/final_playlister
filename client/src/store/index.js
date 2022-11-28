@@ -428,6 +428,59 @@ function GlobalStoreContextProvider(props) {
         return exists.data.success
     }
 
+    store.duplicateList = function (id) {
+        console.log("DUPLICATING")
+
+        async function asyncDupeList(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                let newListName = playlist.name;
+
+                let exists = await api.getPlaylistByName(newListName,auth.user.email);
+                if(exists.data.success){
+                    let i = 0;
+                    let newerListName = newListName
+                    while(exists.data.success){
+                        newerListName = newListName + i
+                        exists = await api.getPlaylistByName(newerListName,auth.user.email);
+                        i = i + 1;
+                    }
+                    newListName = newerListName
+                }
+                response = await api.createPlaylist(newListName, playlist.songs, auth.user.email, auth.user.userName, 0, 0, 0);
+                console.log("createNewList response: " + response);
+                if (response.status === 201) {
+                    tps.clearAllTransactions();
+                    let newList = response.data.playlist;
+                    async function getListPairs(playlist) {
+                        response = await api.getPlaylistPairs();
+                        if (response.data.success) {
+                            let pairsArray = response.data.idNamePairs;
+                            pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                            let allLists = response.data.playlists;
+                            console.log(allLists)
+                            storeReducer({
+                                type: GlobalStoreActionType.CREATE_NEW_LIST,
+                                payload: {
+                                    idNamePairs: pairsArray,
+                                }
+                            });
+                        }
+                    }
+                    getListPairs(newList);
+                    console.log("SORT TYPE AFTER MAKING NEW LIST:")
+                    console.log(store.currentSort)
+                    // IF IT'S A VALID LIST THEN LET'S START EDITING IT
+                }
+                else {
+                    console.log("API FAILED TO CREATE A NEW LIST");
+                }
+            }
+        }
+        asyncDupeList(id);
+    }
+
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = "Untitled 0";

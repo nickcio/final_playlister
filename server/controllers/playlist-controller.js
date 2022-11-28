@@ -90,7 +90,7 @@ getPlaylistById = async (req, res) => {
             return res.status(400).json({ success: false, error: err });
         }
         console.log("Found list: " + JSON.stringify(list));
-
+        
         // DOES THIS LIST BELONG TO THIS USER?
         async function asyncFindUser(list) {
             await User.findOne({ email: list.ownerEmail }, (err, user) => {
@@ -102,7 +102,7 @@ getPlaylistById = async (req, res) => {
                 }
                 else {
                     console.log("incorrect user!");
-                    return res.status(400).json({ success: false, description: "authentication error" });
+                    return res.status(200).json({ success: true, playlist: list })
                 }
             });
         }

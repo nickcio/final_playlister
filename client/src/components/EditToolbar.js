@@ -67,6 +67,12 @@ function EditToolbar(props) {
         store.publishList(store.currentList._id);
     }
 
+    function handleDuplicate() {
+        console.log("LIST ID 444")
+        console.log(id)
+        store.duplicateList(id)
+    }
+
     let undoButton = ""
     let redoButton = ""
     let publishButton = ""
@@ -136,7 +142,8 @@ function EditToolbar(props) {
             <Grid item xs={2} md={2}>
                 <Box 
                     id='duplicate-button'
-                    style={buttonStyle}>
+                    style={buttonStyle}
+                    onClick={handleDuplicate}>
                     Duplicate
                 </Box>
             </Grid>
