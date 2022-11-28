@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react'
 import { GlobalStoreContext } from '../store'
 import AuthContext from '../auth'
+import api from '../store/store-request-api'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -92,6 +93,18 @@ const songCardStyle = {
     display: 'flex'
 }
 
+const textFieldGood = {
+    backgroundColor:'white', 
+    borderRadius:1,
+    fontSize:'15pt'
+}
+
+const textFieldBad = {
+    backgroundColor:'#faaba5', 
+    borderRadius:1,
+    borderColor:'red'
+}
+
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
@@ -99,6 +112,8 @@ function ListCard(props) {
     const [listOpen, setListOpen] = useState(false);
     const [text, setText] = useState("");
     const { idNamePair, selected } = props;
+    const [labelName, setLabelName] = useState("Playlist Name")
+    const [textStyle, setTextStyle] = useState(textFieldGood)
     let published = idNamePair.playlist.published.isPublished;
 
     let userName = ""
@@ -175,13 +190,29 @@ function ListCard(props) {
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
+            let currentName = idNamePair.name
             let id = event.target.id.substring("list-".length);
-            store.changeListName(id, text);
-            toggleEdit();
+            async function asyncEdit(id) {
+                let response = await api.getPlaylistByName(text,auth.user.email)
+                if(response.data.success && currentName !== text){
+                    setLabelName("Warning: That name is already taken.")
+                    console.log(labelName)
+                    setTextStyle(textFieldBad)
+                }
+                else{
+                    store.changeListName(id, text);
+                    toggleEdit();
+                    setLabelName("Playlist Name")
+                    setTextStyle(textFieldGood)
+                }
+            }
+            asyncEdit(id);
         }
     }
     function handleUpdateText(event) {
-        setText(event.target.value);
+        setText(event.target.value)
+        setLabelName("Playlist Name")
+        setTextStyle(textFieldGood)
     }
 
     let addSongCard = 
@@ -349,17 +380,16 @@ function ListCard(props) {
                 required
                 fullWidth
                 id={"list-" + idNamePair._id}
-                label="Playlist Name"
+                label={labelName}
                 name="name"
                 autoComplete="Playlist Name"
                 className='list-card'
                 onKeyPress={handleKeyPress}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 18}}}
-                InputLabelProps={{style: {fontSize: 18}}}
+                inputProps={{style: {textStyle}}}
+                InputLabelProps={{style: {textStyle}}}
                 autoFocus
-                sx={{backgroundColor:'white', borderRadius:1}}
             />
         </Grid>
         <Grid item xs={12} md={12}>
