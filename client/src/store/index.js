@@ -144,7 +144,7 @@ function GlobalStoreContextProvider(props) {
                     currentView : store.currentView,
                     currentSort : store.currentSort,
                     idNamePairs: payload.idNamePairs,
-                    currentList: payload.currentList,
+                    currentList: store.currentList,
                     playingList: store.playingList,
                     currentSongIndex: -1,
                     currentSong: null,
@@ -418,11 +418,23 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
-        let newListName = "Untitled" + store.newListCounter;
+        let newListName = "Untitled 0";
         console.log("USERNAME")
         console.log(auth.user)
         console.log("SORT AT BEGINNING OF CREATE")
         console.log(store.currentSort)
+        //Duplicate name check
+        let exists = await api.getPlaylistByName(newListName,auth.user.email);
+        if(exists.data.success){
+            let i = 1;
+            let newerListName = newListName
+            while(exists.data.success){
+                newerListName = "Untitled " + i
+                exists = await api.getPlaylistByName(newerListName,auth.user.email);
+                i = i + 1;
+            }
+            newListName = newerListName
+        }
         let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
@@ -439,7 +451,6 @@ function GlobalStoreContextProvider(props) {
                         type: GlobalStoreActionType.CREATE_NEW_LIST,
                         payload: {
                             idNamePairs: pairsArray,
-                            currentList: playlist
                         }
                     });
                 }
