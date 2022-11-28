@@ -216,6 +216,18 @@ function ListCard(props) {
         setTextStyle(textFieldGood)
     }
 
+    function handleLike(event) {
+        console.log("LIKING")
+        event.stopPropagation()
+        store.likeList(idNamePair._id, auth.user.email)
+    }
+
+    function handleDislike(event) {
+        console.log("DISLIKING")
+        event.stopPropagation()
+        store.dislikeList(idNamePair._id, auth.user.email)
+    }
+
     let addSongCard = 
         <Box 
             style={songCardStyle} 
@@ -270,13 +282,13 @@ function ListCard(props) {
                 <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+                <Typography onClick={(event) => {handleLike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
+                <Typography onClick={(event) => {handleDislike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>
@@ -316,13 +328,13 @@ function ListCard(props) {
                     <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+                    <Typography onClick={(event) => {handleLike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
+                    <Typography onClick={(event) => {handleDislike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon /> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>

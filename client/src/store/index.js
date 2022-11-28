@@ -448,7 +448,7 @@ function GlobalStoreContextProvider(props) {
                     }
                     newListName = newerListName
                 }
-                response = await api.createPlaylist(newListName, playlist.songs, auth.user.email, auth.user.userName, 0, 0, 0);
+                response = await api.createPlaylist(newListName, playlist.songs, auth.user.email, auth.user.userName, 0, 0, 0, [], []);
                 console.log("createNewList response: " + response);
                 if (response.status === 201) {
                     tps.clearAllTransactions();
@@ -500,18 +500,21 @@ function GlobalStoreContextProvider(props) {
             }
             newListName = newerListName
         }
-        let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0);
+        let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0, [], []);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
             tps.clearAllTransactions();
             let newList = response.data.playlist;
+            console.log("NEW LIST FIRST")
+            console.log(newList)
             async function getListPairs(playlist) {
                 response = await api.getPlaylistPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                     let allLists = response.data.playlists;
-                    console.log(allLists)
+                    console.log("NEW LIST")
+                    console.log(playlist)
                     storeReducer({
                         type: GlobalStoreActionType.CREATE_NEW_LIST,
                         payload: {
@@ -714,6 +717,98 @@ function GlobalStoreContextProvider(props) {
         console.log(lastSort)
         console.log("IT SHOULD BE:")
         console.log(sortType)
+    }
+
+    store.likeList = async function(id, email) {
+        async function asyncLikeList(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                let likesList = playlist.likeList
+                if(likesList.includes(email)) {
+                    console.log("HAS LIKED BEFORE")
+                    likesList.splice(likesList.indexOf(email),1)
+                    playlist.likeList = likesList
+                    playlist.likes = playlist.likes - 1
+                }
+                else {
+                    console.log("NOT LIKED BEFORE")
+                    likesList.push(email)
+                    playlist.likeList = likesList
+                    playlist.likes = playlist.likes + 1
+                }
+                console.log(likesList)
+                async function updateList(playlist) {
+                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    if (response.data.success) {
+                        async function getListPairs(playlist) {
+                            response = await api.getPlaylistPairs();
+                            if (response.data.success) {
+                                let pairsArray = response.data.idNamePairs;
+                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                                let allLists = response.data.playlists;
+                                console.log("LIKED")
+                                storeReducer({
+                                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                                    payload: {
+                                        idNamePairs: pairsArray
+                                    }
+                                });
+                            }
+                        }
+                        getListPairs(playlist);
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncLikeList(id);
+    }
+
+    store.dislikeList = async function(id, email) {
+        async function asyncLikeList(id) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                let dislikesList = playlist.dislikeList
+                if(dislikesList.includes(email)) {
+                    console.log("HAS LIKED BEFORE")
+                    dislikesList.splice(dislikesList.indexOf(email),1)
+                    playlist.dislikeList = dislikesList
+                    playlist.dislikes = playlist.dislikes - 1
+                }
+                else {
+                    console.log("NOT LIKED BEFORE")
+                    dislikesList.push(email)
+                    playlist.dislikeList = dislikesList
+                    playlist.dislikes = playlist.dislikes + 1
+                }
+                console.log(dislikesList)
+                async function updateList(playlist) {
+                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    if (response.data.success) {
+                        async function getListPairs(playlist) {
+                            response = await api.getPlaylistPairs();
+                            if (response.data.success) {
+                                let pairsArray = response.data.idNamePairs;
+                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                                let allLists = response.data.playlists;
+                                console.log("LIKED")
+                                storeReducer({
+                                    type: GlobalStoreActionType.CREATE_NEW_LIST,
+                                    payload: {
+                                        idNamePairs: pairsArray
+                                    }
+                                });
+                            }
+                        }
+                        getListPairs(playlist);
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncLikeList(id);
     }
 
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
