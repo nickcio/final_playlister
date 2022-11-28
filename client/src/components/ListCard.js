@@ -396,16 +396,7 @@ function ListCard(props) {
         <Grid item xs={12} md={12}>
             <Typography sx={{ fontSize:'8pt' }}>By: {userName}</Typography>
         </Grid>
-        <Grid item xs={10} md={10}></Grid>
-        <Grid item xs={1} md={1}>
-            <Box >
-                <IconButton onClick={(event) => {
-                        handleDeleteList(event, idNamePair._id)
-                    }} aria-label='delete'>
-                    <DeleteIcon style={{fontSize:'18pt'}} />
-                </IconButton>
-            </Box>
-        </Grid>
+        <Grid item xs={11} md={11}></Grid>
         <Grid item xs={1} md={1}>
             <Box >
                 <IconButton onClick={(event) => {handleLoadList(event, idNamePair._id)}} aria-label='edit'>

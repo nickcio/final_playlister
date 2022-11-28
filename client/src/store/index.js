@@ -442,7 +442,7 @@ function GlobalStoreContextProvider(props) {
                     let i = 0;
                     let newerListName = newListName
                     while(exists.data.success){
-                        newerListName = newListName + i
+                        newerListName = newListName + " " + i
                         exists = await api.getPlaylistByName(newerListName,auth.user.email);
                         i = i + 1;
                     }
