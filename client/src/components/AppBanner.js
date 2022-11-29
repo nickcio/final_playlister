@@ -24,6 +24,12 @@ const size = {
     marginRight:'40px'
 }
 
+const sizeCurrent = {
+    transform:"scale(1.8)",
+    marginRight:'40px',
+    color:'#6cc0f5'
+}
+
 const textF = {
     display:'flex',
     alignItems:'center',
@@ -39,9 +45,27 @@ export default function AppBanner() {
     const { store } = useContext(GlobalStoreContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
+    const [text, setText] = useState("");
     const [anchorSortEl, setAnchorSortEl] = useState(null);
     const isSortOpen = Boolean(anchorSortEl);
     const inHome = Boolean(store.isInHome());
+    const inUser = Boolean(store.viewIsUser());
+    const inLists = Boolean(store.viewIsAll());
+
+    let homeStyle = size
+    if(inHome) {
+        homeStyle = sizeCurrent
+    }
+
+    let userStyle = size
+    if(inUser) {
+        userStyle = sizeCurrent
+    }
+
+    let listStyle = size
+    if(inLists) {
+        listStyle = sizeCurrent
+    }
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -100,6 +124,37 @@ export default function AppBanner() {
         store.closeCurrentList();
         store.clearTransactions();
         auth.logoutUser();
+    }
+
+    const handleUpdateText = (event) => {
+        setText(event.target.value)
+    }
+
+    const handleKeyPress = (event) => {
+        if (event.code === "Enter") {
+            console.log("SEARCHIBNG BY: " + text)
+            console.log(inHome)
+            console.log(inUser)
+            console.log(inLists)
+            if(inUser) {
+                store.loadIdNamePairsByUser(text)
+            }
+            else if(inLists) {
+                store.loadIdNamePairsByList(text)
+            }
+        }
+    }
+
+    const handleHome = () => {
+        store.viewToHome()
+    }
+
+    const handleUser = () => {
+        store.viewToUser()
+    }
+
+    const handleList = () => {
+        store.viewToAll()
     }
 
     const menuId = 'primary-search-account-menu';
@@ -244,17 +299,21 @@ export default function AppBanner() {
             style={{backgroundColor: 'black'}}
             >
                 <Box>
-                    <HomeIcon sx={size}/>
+                    <HomeIcon onClick={handleHome} sx={homeStyle}/>
                 </Box>
                 <Box>
-                    <GroupsIcon sx={size}/>
+                    <GroupsIcon onClick={handleList} sx={listStyle}/>
                 </Box>
                 <Box>
-                    <PersonIcon sx={size}/>
+                    <PersonIcon onClick={handleUser} sx={userStyle}/>
                 </Box>
-                <TextField style={textF} label="Search" fullWidth>
-                    Genus
-                </TextField>
+                <TextField 
+                        style={textF} 
+                        label="Search" 
+                        fullWidth  
+                        onKeyPress={handleKeyPress}
+                        onChange={handleUpdateText}
+                    />
                 <Box sx={{marginLeft:'50px', width:'50px'}}>
                     SORT BY
                 </Box>

@@ -105,6 +105,16 @@ const textFieldBad = {
     borderColor:'red'
 }
 
+const thumbStyle = {
+    color: 'black',
+    fontSize: '18pt'
+}
+
+const thumbStyleClicked = {
+    color: 'blue',
+    fontSize: '18pt'
+}
+
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
@@ -114,8 +124,20 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
     const [labelName, setLabelName] = useState("Playlist Name")
     const [textStyle, setTextStyle] = useState(textFieldGood)
+    let isOwner = Boolean(auth.user.email === idNamePair.playlist.ownerEmail)
     let published = idNamePair.playlist.published.isPublished;
     let listId = idNamePair.playlist._id
+    let thumbUpStyle = thumbStyle
+    if(idNamePair.playlist.likeList.includes(auth.user.email)) {
+        console.log("LIKER")
+        thumbUpStyle = thumbStyleClicked
+    }
+
+    let thumbDownStyle = thumbStyle
+    if(idNamePair.playlist.dislikeList.includes(auth.user.email)) {
+        console.log("DISLIKER")
+        thumbDownStyle = thumbStyleClicked
+    }
 
     let userName = ""
     if(idNamePair.playlist.userName){
@@ -168,7 +190,7 @@ function ListCard(props) {
     }
 
     function handleToggleEdit(event) {
-        if(!published) {
+        if(!published && isOwner) {
             event.stopPropagation();
             toggleEdit();
         }
@@ -194,15 +216,22 @@ function ListCard(props) {
             let currentName = idNamePair.name
             let id = event.target.id.substring("list-".length);
             async function asyncEdit(id) {
-                let response = await api.getPlaylistByName(text,auth.user.email)
-                if(response.data.success && currentName !== text){
-                    setLabelName("Warning: That name is already taken.")
-                    console.log(labelName)
-                    setTextStyle(textFieldBad)
+                if(text) {
+                    let response = await api.getPlaylistByName(text,auth.user.email)
+                    if(response.data.success && currentName !== text){
+                        setLabelName("Warning: That name is already taken.")
+                        console.log(labelName)
+                        setTextStyle(textFieldBad)
+                    }
+                    else{
+                        store.changeListName(id, text);
+                        toggleEdit();
+                        setLabelName("Playlist Name")
+                        setTextStyle(textFieldGood)
+                    }
                 }
-                else{
-                    store.changeListName(id, text);
-                    toggleEdit();
+                else {
+                    toggleEdit()
                     setLabelName("Playlist Name")
                     setTextStyle(textFieldGood)
                 }
@@ -282,13 +311,13 @@ function ListCard(props) {
                 <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography onClick={(event) => {handleLike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+                <Typography onClick={(event) => {handleLike(event)}} >{published ? <ThumbUpIcon sx={thumbUpStyle}/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
-                <Typography onClick={(event) => {handleDislike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon/> : ""}</Typography>
+                <Typography onClick={(event) => {handleDislike(event)}} >{published ? <ThumbDownIcon sx={thumbDownStyle}/> : ""}</Typography>
             </Grid>
             <Grid item xs={1} md={1}>
                 <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>
@@ -328,13 +357,13 @@ function ListCard(props) {
                     <Typography sx={{ fontSize:'18pt' }}>{idNamePair.name}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography onClick={(event) => {handleLike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon/> : ""}</Typography>
+                    <Typography onClick={(event) => {handleLike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbUpIcon sx={thumbUpStyle}/> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? likes : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
-                    <Typography onClick={(event) => {handleDislike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon /> : ""}</Typography>
+                    <Typography onClick={(event) => {handleDislike(event)}} sx={{ fontSize:'18pt' }}>{published ? <ThumbDownIcon sx={thumbDownStyle}/> : ""}</Typography>
                 </Grid>
                 <Grid item xs={1} md={1}>
                     <Typography sx={{ fontSize:'10pt', fontWeight:'bold' }}>{published ? dislikes : ""}</Typography>
