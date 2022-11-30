@@ -72,14 +72,16 @@ const publishedCardStyleOpen = {
 const inCard = {
     width: '100%', 
     fontSize: '18pt', 
-    backgroundColor: '#94a1e3'
+    backgroundColor: '#94a1e3',
+    overflowX: 'hidden'
 }
 
 const publishInCard = {
     width: '100%', 
     fontSize: '18pt', 
     backgroundColor: '#1f1f78',
-    color: '#c8c8fa'
+    color: '#c8c8fa',
+    overflowX: 'hidden'
 }
 
 const songCardStyle = {
@@ -284,7 +286,7 @@ function ListCard(props) {
     if(published) {
         cardsList =
         store.currentList.songs.map((song, index) => (
-            <Typography sx={{ml:2}}>{index + 1}. {song.title} by {song.artist}</Typography>
+            <Typography sx={{ml:2, overflowX: 'hidden'}}>{index + 1}. {song.title} by {song.artist}</Typography>
         ))
     }
     }
@@ -375,7 +377,7 @@ function ListCard(props) {
                     <Box className="inside-list" style={published ? publishInCard : inCard}>
                         <List 
                         id="playlist-cards" 
-                        sx={{ width: '100%' }}
+                        sx={{ width: '100%', overflowX: 'hidden' }}
                         >
                         {
                             cardsList
