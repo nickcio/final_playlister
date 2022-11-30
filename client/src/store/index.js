@@ -884,22 +884,7 @@ function GlobalStoreContextProvider(props) {
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
-                        async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
-                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
-                                let allLists = response.data.playlists;
-                                console.log("LIKED")
-                                storeReducer({
-                                    type: GlobalStoreActionType.CREATE_NEW_LIST,
-                                    payload: {
-                                        idNamePairs: pairsArray
-                                    }
-                                });
-                            }
-                        }
-                        getListPairs(playlist);
+                        store.chooseLoadPairs()
                     }
                 }
                 updateList(playlist);
@@ -930,22 +915,7 @@ function GlobalStoreContextProvider(props) {
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
-                        async function getListPairs(playlist) {
-                            response = await api.getPlaylistPairs();
-                            if (response.data.success) {
-                                let pairsArray = response.data.idNamePairs;
-                                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
-                                let allLists = response.data.playlists;
-                                console.log("LIKED")
-                                storeReducer({
-                                    type: GlobalStoreActionType.CREATE_NEW_LIST,
-                                    payload: {
-                                        idNamePairs: pairsArray
-                                    }
-                                });
-                            }
-                        }
-                        getListPairs(playlist);
+                        store.chooseLoadPairs()
                     }
                 }
                 updateList(playlist);
@@ -974,7 +944,7 @@ function GlobalStoreContextProvider(props) {
     store.deleteList = function (id) {
         async function processDelete(id) {
             let response = await api.deletePlaylistById(id);
-            store.loadIdNamePairs();
+            store.chooseLoadPairs();
             history.push("/");
         }
         processDelete(id);
