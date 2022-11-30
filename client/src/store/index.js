@@ -484,7 +484,7 @@ function GlobalStoreContextProvider(props) {
             }
             newListName = newerListName
         }
-        let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0, [], []);
+        let response = await api.createPlaylist(newListName, [], auth.user.email, auth.user.userName, 0, 0, 0, [], [], []);
         console.log("createNewList response: " + response);
         if (response.status === 201) {
             tps.clearAllTransactions();
@@ -740,6 +740,25 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.commentOnList = function(id, userName, text) {
+        async function asyncComment(id, userName, text) {
+            let response = await api.getPlaylistById(id);
+            if (response.data.success) {
+                let playlist = response.data.playlist;
+                let comments = playlist.comments;
+                comments.push({userName: userName, text: text});
+                async function updateList(playlist) {
+                    response = await api.updatePlaylistById(playlist._id, playlist);
+                    if (response.data.success) {
+                        store.chooseLoadPairs()
+                    }
+                }
+                updateList(playlist);
+            }
+        }
+        asyncComment(id, userName, text);
+    }
+
     store.comparator = function (pred) {
         let func = function (a,b) {
             if(pred(a,b)) return 1
@@ -833,33 +852,93 @@ function GlobalStoreContextProvider(props) {
         console.log(store.currentSort)
         console.log(sortType)
         async function asyncLoadIdNamePairs() {
-            const response = await api.getPlaylistPairs();
-            if (response.data.success) {
-                let pairsArray = response.data.idNamePairs;
-                console.log("WHAT SORT TYPE IS BEFORE CALLING")
-                console.log(sortType)
-                pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
-                let allLists = response.data.playlists;
-                storeReducer({
-                    type: GlobalStoreActionType.SET_SORT_TYPE,
-                    payload: {
-                        sortType : sortType,
-                        idNamePairs : pairsArray,
-                        allPlaylists : allLists
-                    }
-                });
+            if(store.viewIsHome()) {
+                const response = await api.getPlaylistPairs();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+                    pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
+                    let allLists = response.data.playlists;
+                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                    console.log(store.currentSort)
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SORT_TYPE,
+                        payload: {
+                            idNamePairs: pairsArray,
+                            playlists: allLists,
+                            currentSort: sortType
+                        }
+                    });
+                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                    console.log(store.currentSort)
+                }
+                else {
+                    console.log("API FAILED TO GET THE LIST PAIRS");
+                }
             }
-            else {
-                console.log("API FAILED TO GET THE LIST PAIRS");
+            else if(store.viewIsAll()) {
+                const response = await api.getPlaylists();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+                    pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished === true);
+                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                    pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
+                    let allLists = response.data.playlists;
+                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                    console.log(store.currentSort)
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SORT_TYPE,
+                        payload: {
+                            idNamePairs: pairsArray,
+                            playlists: allLists,
+                            currentSort: sortType
+                        }
+                    });
+                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                    console.log(store.currentSort)
+                }
+                else {
+                    storeReducer({
+                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                        payload: {
+                            idNamePairs: [],
+                            playlists: []
+                        }
+                    });
+                }
+            }
+            else if(store.viewIsUser()) {
+                const response = await api.getPlaylists();
+                if (response.data.success) {
+                    let pairsArray = response.data.idNamePairs;
+                    pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished);
+                    pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
+                    pairsArray = pairsArray.filter((pair) => pair.playlist.userName.includes(search));
+                    let allLists = response.data.playlists;
+                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                    console.log(store.currentSort)
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_SORT_TYPE,
+                        payload: {
+                            idNamePairs: pairsArray,
+                            playlists: allLists,
+                            currentSort: sortType
+                        }
+                    });
+                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                    console.log(store.currentSort)
+                }
+                else {
+                    storeReducer({
+                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                        payload: {
+                            idNamePairs: [],
+                            playlists: []
+                        }
+                    });
+                }
             }
         }
         asyncLoadIdNamePairs();
-        console.log("SORT AFTER SORT TYPE::")
-        console.log(store.currentSort)
-        console.log("LASTSORT IS")
-        console.log(lastSort)
-        console.log("IT SHOULD BE:")
-        console.log(sortType)
     }
 
     store.likeList = async function(id, email) {
