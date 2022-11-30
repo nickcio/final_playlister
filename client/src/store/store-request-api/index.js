@@ -43,6 +43,7 @@ export const getPlaylistByName = (name, email) => api.get(`/playlist/${email}/${
 export const getPlaylistPairs = () => api.get(`/playlistpairs/`)
 export const getPlaylistPairsByLists = (name) => api.get(`/playlistpairs/${name}`)
 export const getPlaylistPairsByUser = (userName) => api.get(`/playlistpairs/${userName}`)
+export const getPlaylists = () => api.get(`/playlists/`)
 export const updatePlaylistById = (id, playlist) => {
     return api.put(`/playlist/${id}`, {
         // SPECIFY THE PAYLOAD
@@ -58,6 +59,7 @@ const apis = {
     getPlaylistPairs,
     getPlaylistPairsByLists,
     getPlaylistPairsByUser,
+    getPlaylists,
     updatePlaylistById
 }
 
