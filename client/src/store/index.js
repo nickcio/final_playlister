@@ -473,7 +473,7 @@ function GlobalStoreContextProvider(props) {
                 console.log("createNewList response: " + response);
                 if (response.status === 201) {
                     tps.clearAllTransactions();
-                    store.chooseLoadPairs()
+                    store.chooseLoadPairsKeepCurrent()
                     // IF IT'S A VALID LIST THEN LET'S START EDITING IT
                 }
                 else {
@@ -579,7 +579,7 @@ function GlobalStoreContextProvider(props) {
         async function asyncLoadIdNamePairsByList(name) {
             console.log("SEARCHING BY NAME 2: " + name)
             const response = await api.getPlaylists();
-            if (response.data.success) {
+            if (response.data.success && name !== "") {
                 let pairsArray = response.data.idNamePairs;
                 pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished === true);
                 pairsArray = pairsArray.filter((pair) => pair.name.includes(name));
@@ -643,7 +643,7 @@ function GlobalStoreContextProvider(props) {
         async function asyncLoadIdNamePairsByUser(userName) {
             console.log("called this one, the user")
             const response = await api.getPlaylists();
-            if (response.data.success) {
+            if (response.data.success && userName !== "") {
                 let pairsArray = response.data.idNamePairs;
                 pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished);
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
@@ -845,6 +845,10 @@ function GlobalStoreContextProvider(props) {
                 });
             }
         }
+    }
+
+    store.getSearchQuery = function() {
+        return search
     }
 
     store.commentOnList = function(id, userName, text) {

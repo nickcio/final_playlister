@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { GlobalStoreContext } from '../store'
 import AuthContext from '../auth';
-import { Typography } from '@mui/material'
+import { getIconButtonUtilityClass, Typography } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import Fab from '@mui/material/Fab';
 import List from '@mui/material/List';
@@ -30,6 +30,9 @@ const statusStyle = {
 function Statusbar() {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const inHome = Boolean(store.isInHome());
+    const inUser = Boolean(store.viewIsUser());
+    const inLists = Boolean(store.viewIsAll());
 
     function handleCreateNewList() {
         store.createNewList();
@@ -37,7 +40,7 @@ function Statusbar() {
 
     let text ="";
     if(auth.user) {
-        if (store.viewIsHome()) {
+        if (inHome) {
         console.log("IS HOME!")
         text = 
             <Box  sx={{ mt: 4 }} id="list-selector-heading">
@@ -50,6 +53,18 @@ function Statusbar() {
                     <AddIcon />
                 </Fab>
                 <Typography variant="h2">Your Lists</Typography>
+            </Box>
+        }
+        else if(inUser) {
+            text = 
+            <Box  sx={{ mt: 4 }} id="list-selector-heading">
+                <Typography variant="h2">{store.getSearchQuery()} Lists</Typography>
+            </Box>
+        }
+        else if(getIconButtonUtilityClass) {
+            text = 
+            <Box  sx={{ mt: 4 }} id="list-selector-heading">
+                <Typography variant="h2">{store.getSearchQuery()} Playlists</Typography>
             </Box>
         }
     }
