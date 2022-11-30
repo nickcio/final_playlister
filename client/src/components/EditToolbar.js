@@ -56,6 +56,7 @@ function EditToolbar(props) {
     const { id, published, email } = props;
     let isPublished = Boolean(published);
     let isOwner = Boolean(auth.user.email === email)
+    const isGuest = Boolean(auth.user === "guest")
 
     function handleUndo() {
         store.undo();
@@ -117,6 +118,18 @@ function EditToolbar(props) {
         </Box>
     }
 
+    let duplicateButton = ""
+    if(!isGuest) {
+        duplicateButton =
+        <Box 
+            id='duplicate-button'
+            style={buttonStyle}
+            onClick={handleDuplicate}>
+            Duplicate
+        </Box>
+    }
+    
+
     async function handleDeleteList(event, id) {
         event.stopPropagation();
         let _id = event.target.id;
@@ -140,12 +153,7 @@ function EditToolbar(props) {
                 {deleteButton}
             </Grid>
             <Grid item xs={2} md={2}>
-                <Box 
-                    id='duplicate-button'
-                    style={buttonStyle}
-                    onClick={handleDuplicate}>
-                    Duplicate
-                </Box>
+                {duplicateButton}
             </Grid>
             
         </Grid>

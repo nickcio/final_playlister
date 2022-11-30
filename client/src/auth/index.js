@@ -206,18 +206,32 @@ function AuthContextProvider(props) {
                 payload: null
             })
             history.push("/");
+            store.viewToHome()
         }
         console.log("LOGGED OUT 1")
     }
 
     auth.getUserInitials = function() {
         let initials = "";
-        if (auth.user) {
+        if (auth.user && auth.user !== "guest") {
             initials += auth.user.firstName.charAt(0);
             initials += auth.user.lastName.charAt(0);
         }
+        else if(auth.user === "guest") {
+            initials = "G"
+        }
         console.log("user initials: " + initials);
         return initials;
+    }
+
+    auth.continueAsGuest = function() {
+        authReducer({
+            type: AuthActionType.LOGIN_USER,
+            payload: {
+                user: "guest"
+            }
+        })
+        history.push("/");
     }
 
     return (

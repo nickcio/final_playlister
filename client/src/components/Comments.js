@@ -68,6 +68,7 @@ const Comments = () => {
     const [text, setText] = useState("");
     const isLoggedIn = Boolean(auth.loggedIn);
     const [fullComments, setFullComments] = useState("")
+    const isGuest = Boolean(auth.user === "guest")
 
     let commentsList = ""
     let isPublished = false;
@@ -104,7 +105,7 @@ const Comments = () => {
     }
 
     let textField = ""
-    if(isLoggedIn && isPublished) {
+    if(isLoggedIn && isPublished && !isGuest) {
         console.log("TEXT FIELD VALID")
         textField = 
         <TextField

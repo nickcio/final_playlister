@@ -1505,15 +1505,17 @@ function GlobalStoreContextProvider(props) {
             }
         }
         asyncLoadIdNamePairs();
-        
+        setSearch("")
     }
 
     store.viewToUser = function() {
+        console.log("TO USER!")
         storeReducer({
             type: GlobalStoreActionType.CHANGE_VIEW,
             payload: { view: CurrentView.USER_LISTS,
                         idNamePairs: []}
         });
+        setSearch("")
     }
 
     store.viewToAll = function() {
@@ -1522,6 +1524,7 @@ function GlobalStoreContextProvider(props) {
             payload: { view: CurrentView.ALL_LISTS,
                         idNamePairs: []}
         });
+        setSearch("")
     }
 
     store.viewIsNone = function() {

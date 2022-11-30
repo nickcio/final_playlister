@@ -1,7 +1,10 @@
+import React, { useContext, createContext, useEffect, useState } from "react";
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom'
+import { GlobalStoreContext } from '../store'
+import AuthContext from '../auth'
 
 const buttonStyle = {
     width: '150px', 
@@ -22,6 +25,15 @@ const buttonStyle = {
 }
 
 export default function SplashScreen() {
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const isGuest = Boolean(auth.user === "guest")
+
+    function handleGuest() {
+        store.viewToAll()
+        auth.continueAsGuest()
+    }
+
     return (
         <Grid container spacing={0} id="splash-screen">
             <Grid item xs={2} md={12} sx={{mt:10}}>
@@ -39,7 +51,7 @@ export default function SplashScreen() {
             </Grid>
             <Grid item xs={2} md={1}></Grid>
             <Grid item xs={2} md={2}>
-                <Box style={buttonStyle}>Continue as Guest</Box>
+                <Box onClick={handleGuest} style={buttonStyle}>Continue as Guest</Box>
             </Grid>
             <Grid item xs={2} md={2}></Grid>
             <Grid item xs={2} md={2}>

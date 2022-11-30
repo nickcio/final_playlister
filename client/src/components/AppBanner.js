@@ -30,6 +30,12 @@ const sizeCurrent = {
     color:'#6cc0f5'
 }
 
+const sizeDisabled = {
+    transform:"scale(1.8)",
+    marginRight:'40px',
+    color:'black'
+}
+
 const textF = {
     display:'flex',
     alignItems:'center',
@@ -51,10 +57,14 @@ export default function AppBanner() {
     const inHome = Boolean(store.isInHome());
     const inUser = Boolean(store.viewIsUser());
     const inLists = Boolean(store.viewIsAll());
+    const isGuest = Boolean(auth.user === "guest")
 
     let homeStyle = size
     if(inHome) {
         homeStyle = sizeCurrent
+    }
+    if(isGuest) {
+        homeStyle = sizeDisabled
     }
 
     let userStyle = size
@@ -123,6 +133,7 @@ export default function AppBanner() {
         handleMenuClose();
         store.closeCurrentList();
         store.clearTransactions();
+        store.viewToHome()
         auth.logoutUser();
     }
 
@@ -146,7 +157,9 @@ export default function AppBanner() {
     }
 
     const handleHome = () => {
+        if(!isGuest) {
         store.viewToHome()
+        }
     }
 
     const handleUser = () => {

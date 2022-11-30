@@ -33,6 +33,7 @@ function Statusbar() {
     const inHome = Boolean(store.isInHome());
     const inUser = Boolean(store.viewIsUser());
     const inLists = Boolean(store.viewIsAll());
+    const isGuest = Boolean(auth.user === "guest")
 
     function handleCreateNewList() {
         store.createNewList();
@@ -40,7 +41,7 @@ function Statusbar() {
 
     let text ="";
     if(auth.user) {
-        if (inHome) {
+        if (inHome && !isGuest) {
         console.log("IS HOME!")
         text = 
             <Box  sx={{ mt: 4 }} id="list-selector-heading">
