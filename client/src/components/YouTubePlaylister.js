@@ -53,10 +53,11 @@ const centerd = {
 
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
-  let player = <YouTube/>;
-  if(store.playerS) {
-    player = store.playerS
-  }
+  const [playerX, setPlayerX] = useState("")
+    let player = ""
+    if(playerX !== "") {
+      player = playerX
+    }
     let youTubeIds = [];
     let songInfos = [];
     if(store.playingList) {
@@ -146,9 +147,8 @@ export default function YouTubePlaylister() {
   }
 
     function onPlayerReady(event) {
+      setPlayerX(event.target)
       player = event.target
-      store.playerS = player
-      
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -159,8 +159,8 @@ export default function YouTubePlaylister() {
     // VALUE OF 0 MEANS THE SONG PLAYING HAS ENDED.
     function onPlayerStateChange(event) {
         let playerStatus = event.data;
-        player = event.target;
-        store.playerS = player
+        player = event.target
+        setPlayerX(event.target)
         console.log("PLAYEER!!")
       console.log(player)
         if (playerStatus === -1) {

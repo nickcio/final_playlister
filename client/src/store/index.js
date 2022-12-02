@@ -317,7 +317,7 @@ function GlobalStoreContextProvider(props) {
                     currentSort : store.currentSort,
                     idNamePairs: payload.idNamePairs,
                     currentList: null,
-                    playingList: store.playingList,
+                    playingList: null,
                     currentSongIndex: -1,
                     currentSong: null,
                     newListCounter: store.newListCounter,
@@ -426,7 +426,7 @@ function GlobalStoreContextProvider(props) {
                                     let pairsArray = response.data.idNamePairs;
                                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                     let allLists = response.data.playlists;
-                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log("CURRENT SORT NOW BEFORE LOAD:: HOME")
                                     console.log(store.currentSort)
                                     storeReducer({
                                         type: GlobalStoreActionType.TRUE_COMMENT,
@@ -451,7 +451,7 @@ function GlobalStoreContextProvider(props) {
                                     pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
                                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                     let allLists = response.data.playlists;
-                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log("CURRENT SORT NOW BEFORE LOAD:: ALL")
                                     console.log(store.currentSort)
                                     storeReducer({
                                         type: GlobalStoreActionType.TRUE_COMMENT,
@@ -482,7 +482,7 @@ function GlobalStoreContextProvider(props) {
                                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                     pairsArray = pairsArray.filter((pair) => pair.playlist.userName.includes(search));
                                     let allLists = response.data.playlists;
-                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log("CURRENT SORT NOW BEFORE LOAD:: USER")
                                     console.log(store.currentSort)
                                     storeReducer({
                                         type: GlobalStoreActionType.TRUE_COMMENT,
@@ -1003,7 +1003,7 @@ function GlobalStoreContextProvider(props) {
                                 let pairsArray = response.data.idNamePairs;
                                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 let allLists = response.data.playlists;
-                                console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                console.log("CURRENT SORT NOW BEFORE LOAD:: home")
                                 console.log(store.currentSort)
                                 storeReducer({
                                     type: GlobalStoreActionType.TRUE_COMMENT,
@@ -1038,7 +1038,7 @@ function GlobalStoreContextProvider(props) {
                                         playingList: playlist
                                     }
                                 });
-                                console.log("CURRENT SORT NOW AFTER LOAD::")
+                                console.log("CURRENT SORT NOW AFTER LOAD:: all")
                                 console.log(store.currentSort)
                             }
                             else {
@@ -1060,10 +1060,10 @@ function GlobalStoreContextProvider(props) {
                                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 pairsArray = pairsArray.filter((pair) => pair.playlist.userName.includes(search));
                                 let allLists = response.data.playlists;
-                                console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                console.log("CURRENT SORT NOW BEFORE LOAD:: user")
                                 console.log(store.currentSort)
                                 storeReducer({
-                                    type: GlobalStoreActionType.COMMENT,
+                                    type: GlobalStoreActionType.TRUE_COMMENT,
                                     payload: {
                                         idNamePairs: pairsArray,
                                         playlists: allLists,

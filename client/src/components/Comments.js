@@ -16,7 +16,9 @@ const cardStyle = {
     borderWidth: 3,
     borderRadius: 1, 
     borderColor: '#000000',
-    height: '86%'
+    height: '100%',
+    maxHeight: '85%',
+    display:'inline-block'
 }
 
 const commentBox = {
@@ -27,9 +29,10 @@ const commentBox = {
     borderWidth: 3,
     borderRadius: 1, 
     borderColor: '#000000',
-    height: '100%',
+    height: '88%',
     overflow: 'scroll',
-    overflowX: 'hidden'
+    overflowX: 'hidden',
+    display:'inline-block'
 }
 
 const textStyle = {
@@ -40,7 +43,8 @@ const textStyle = {
     borderWidth: 3,
     borderRadius: 1, 
     borderColor: '#000000',
-    height: '12%'
+    height: '12%',
+    display:'inline-block'
 }
 
 const commentStyle = {
@@ -91,13 +95,6 @@ const Comments = () => {
                     setText("")
                     console.log("NEW COMMENTS")
                     console.log(newComments)
-                    commentsList =
-                        newComments.map((comment, index) => (
-                            <Box sx={commentStyle}>
-                                <Typography mb={7} sx={{color:'blue'}}>  {comment.userName}</Typography>
-                                <Typography sx={textOverflow}>{comment.text}</Typography>
-                            </Box>
-                        ))
                 }
             }
             asyncComment(id);
