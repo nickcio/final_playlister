@@ -58,17 +58,21 @@ function EditToolbar(props) {
     let isOwner = Boolean(auth.user.email === email)
     const isGuest = Boolean(auth.user === "guest")
 
-    function handleUndo() {
+    function handleUndo(event) {
+        event.stopPropagation()
         store.undo();
     }
-    function handleRedo() {
+    function handleRedo(event) {
+        event.stopPropagation()
         store.redo();
     }
-    function handlePublish() {
+    function handlePublish(event) {
+        event.stopPropagation()
         store.publishList(store.currentList._id);
     }
 
-    function handleDuplicate() {
+    function handleDuplicate(event) {
+        event.stopPropagation()
         console.log("LIST ID 444")
         console.log(id)
         store.duplicateList(id)

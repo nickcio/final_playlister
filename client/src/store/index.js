@@ -91,7 +91,6 @@ function GlobalStoreContextProvider(props) {
     const history = useHistory();
     const [lastSort, setLastSort] = useState(CurrentSort.CREATED);
     const [search, setSearch] = useState("");
-    const [playingList, setPlayingList] = useState(null)
 
     console.log("inside useGlobalStore");
 
@@ -409,28 +408,108 @@ function GlobalStoreContextProvider(props) {
     store.setPlayingList = async function (id) {
         console.log("PLAYING 1")
         try{
-            async function asyncSetPlayingList(id) {
+            async function asyncSetCurrentList(id) {
                 let response = await api.getPlaylistById(id);
                 if (response.data.success) {
                     console.log("PLAYING 2")
                     let playlist = response.data.playlist;
-                    playlist.listens = playlist.listens + 1;
+                    if(playlist.published.isPublished === true) {
+                        playlist.listens = playlist.listens + 1;
+                    }
                     async function updateList(playlist) {
                         response = await api.updatePlaylistById(playlist._id, playlist);
                         if (response.data.success) {
-                            console.log("PLAYING 3")
-                            console.log(playlist)
-                            storeReducer({
-                                type: GlobalStoreActionType.SET_PLAYING_LIST,
-                                payload: playlist
-                            });
+                            if(store.viewIsHome()) {
+                                const response = await api.getPlaylistPairs();
+                                if (response.data.success) {
+                                    let pairsArray = response.data.idNamePairs;
+                                    pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                                    let allLists = response.data.playlists;
+                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log(store.currentSort)
+                                    storeReducer({
+                                        type: GlobalStoreActionType.TRUE_COMMENT,
+                                        payload: {
+                                            idNamePairs: pairsArray,
+                                            playlists: allLists,
+                                            playingList: playlist
+                                        }
+                                    });
+                                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                                    console.log(store.currentSort)
+                                }
+                                else {
+                                    console.log("API FAILED TO GET THE LIST PAIRS");
+                                }
+                            }
+                            else if(store.viewIsAll()) {
+                                const response = await api.getPlaylists();
+                                if (response.data.success) {
+                                    let pairsArray = response.data.idNamePairs;
+                                    pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished === true);
+                                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                                    pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                                    let allLists = response.data.playlists;
+                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log(store.currentSort)
+                                    storeReducer({
+                                        type: GlobalStoreActionType.TRUE_COMMENT,
+                                        payload: {
+                                            idNamePairs: pairsArray,
+                                            playlists: allLists,
+                                            playingList: playlist
+                                        }
+                                    });
+                                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                                    console.log(store.currentSort)
+                                }
+                                else {
+                                    storeReducer({
+                                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                                        payload: {
+                                            idNamePairs: [],
+                                            playlists: []
+                                        }
+                                    });
+                                }
+                            }
+                            else if(store.viewIsUser()) {
+                                const response = await api.getPlaylists();
+                                if (response.data.success) {
+                                    let pairsArray = response.data.idNamePairs;
+                                    pairsArray = pairsArray.filter((pair) => pair.playlist.published.isPublished);
+                                    pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                                    pairsArray = pairsArray.filter((pair) => pair.playlist.userName.includes(search));
+                                    let allLists = response.data.playlists;
+                                    console.log("CURRENT SORT NOW BEFORE LOAD::")
+                                    console.log(store.currentSort)
+                                    storeReducer({
+                                        type: GlobalStoreActionType.TRUE_COMMENT,
+                                        payload: {
+                                            idNamePairs: pairsArray,
+                                            playlists: allLists,
+                                            playingList: playlist
+                                        }
+                                    });
+                                    console.log("CURRENT SORT NOW AFTER LOAD::")
+                                    console.log(store.currentSort)
+                                }
+                                else {
+                                    storeReducer({
+                                        type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                                        payload: {
+                                            idNamePairs: [],
+                                            playlists: []
+                                        }
+                                    });
+                                }
+                            }
                         }
                     }
                     updateList(playlist)
                 }
             }
-            console.log("PLAYING 66")
-            asyncSetPlayingList(id);
+            asyncSetCurrentList(id);
             }catch(error){
                 console.log("ERROR HERE")
                 console.log(error)
@@ -1356,31 +1435,6 @@ function GlobalStoreContextProvider(props) {
         tps.clearAllTransactions();
     }
 
-    store.setPlayingList = function (id) {
-        try{
-        async function asyncSetPlayingList(id) {
-            let response = await api.getPlaylistById(id);
-            if (response.data.success) {
-                let playlist = response.data.playlist;
-
-                response = await api.updatePlaylistById(playlist._id, playlist);
-                if (response.data.success) {
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_PLAYING_LIST,
-                        payload: playlist
-                    });
-                    tps.clearAllTransactions();
-                }
-            }
-        }
-        asyncSetPlayingList(id);
-        }catch(error){
-            console.log("ERROR HERE")
-            console.log(error)
-            history.push("/")
-        }
-        tps.clearAllTransactions();
-    }
 
     store.getPlaylist = function(id) {
         async function asyncGetList(id) {

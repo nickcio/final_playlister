@@ -180,7 +180,7 @@ function ListCard(props) {
     }
     let listens = 0;
     if(idNamePair.playlist.listens){
-        listens = idNamePair.playlist.listen;
+        listens = idNamePair.playlist.listens;
     }
     let publishDate = "";
     if(idNamePair.playlist.published.publishDate){
