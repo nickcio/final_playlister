@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { Link } from 'react-router-dom'
 import AuthContext from '../auth';
 import { GlobalStoreContext } from '../store'
-
+import Logo from '../PlaylisterIcon.png'
 import EditToolbar from './EditToolbar'
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -291,7 +291,7 @@ export default function AppBanner() {
                     component="div"
                     sx={{ display: { xs: 'none', sm: 'block' } }}                        
                 >
-                    Playlister
+                    <img style={{ width: 150, height: 50 }} src={Logo}/>
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}>{editToolbar}</Box>
                 <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
