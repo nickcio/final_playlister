@@ -260,7 +260,7 @@ updatePlaylist = async (req, res) => {
     const body = req.body
     console.log("updatePlaylist: " + JSON.stringify(body));
     console.log("req.body.name: " + req.body.name);
-
+    console.log(body.playlist.listens)
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -282,6 +282,9 @@ updatePlaylist = async (req, res) => {
             list.name = body.playlist.name;
             list.songs = body.playlist.songs;
             list.published = body.playlist.published;
+            console.log("LIST PUBLISHED!")
+            console.log(list.published)
+            console.log(body.playlist.published)
             list.likes = body.playlist.likes;
             list.dislikes = body.playlist.dislikes;
             list.listens = body.playlist.listens;

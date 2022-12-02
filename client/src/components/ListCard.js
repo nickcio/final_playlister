@@ -219,6 +219,7 @@ function ListCard(props) {
     }
 
     function handlePlay() {
+        console.log("PLAYING 0")
         store.setPlayingList(listId)
     }
 

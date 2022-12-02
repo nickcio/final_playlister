@@ -66,12 +66,10 @@ const YoutubeWrapper = () => {
     let playerBox = ""
 
     if(playerOn === 1) {
-        currentPlayer = <YoutubePlayer/>
         commentBox = boxStyleOff
         playerBox = boxStyle
     }
     else {
-        currentPlayer = <Comments/>
         commentBox = boxStyle
         playerBox = boxStyleOff
     }
@@ -97,9 +95,11 @@ const YoutubeWrapper = () => {
             </Grid>
         </Grid>
         <Box sx={{display: playerOn === 0 ? 'none' : 'visible'}}>
-         <YoutubePlayer/>
+            <YoutubePlayer/>
         </Box>
-        <Comments/>
+        <Box sx={{display: playerOn === 1 ? 'none' : 'visible', height:'100%'}}>
+            <Comments/>
+        </Box>
         </div>
     )
 }

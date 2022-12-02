@@ -72,9 +72,9 @@ const Comments = () => {
 
     let commentsList = ""
     let isPublished = false;
-    if(store.currentList) {
-        console.log(store.currentList.published.isPublished)
-        isPublished = store.currentList.published.isPublished;
+    if(store.playingList) {
+        console.log(store.playingList.published.isPublished)
+        isPublished = store.playingList.published.isPublished;
     }
     
     function handleUpdateText(event) {
@@ -83,8 +83,8 @@ const Comments = () => {
 
     function handleKeypress(event) {
         if (event.code === "Enter") {
-            let id = store.currentList._id
-            console.log(store.currentList)
+            let id = store.playingList._id
+            console.log(store.playingList)
             async function asyncComment(id) {
                 if(text) {
                     let newComments = store.commentOnList(id, auth.user.userName, text);
@@ -121,9 +121,9 @@ const Comments = () => {
     }
 
     
-    if(store.currentList && isPublished) {
+    if(store.playingList && isPublished) {
         commentsList =
-        store.currentList.comments.map((comment, index) => (
+        store.playingList.comments.map((comment, index) => (
             <Box sx={commentStyle}>
                 <Typography mb={1} sx={{color:'blue'}}>  {comment.userName}</Typography>
                 <Typography sx={textOverflow}>{comment.text}</Typography>

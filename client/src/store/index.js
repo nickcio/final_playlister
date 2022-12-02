@@ -37,7 +37,8 @@ export const GlobalStoreActionType = {
     SET_PLAYING_LIST: "SET_PLAYING_LIST",
     SET_SORT_TYPE: "SET_SORT_TYPE",
     SET_SEARCH_QUERY: "SET_SEARCH_QUERY",
-    COMMENT: "COMMENT"
+    COMMENT: "COMMENT",
+    TRUE_COMMENT: "TRUE_COMMENT"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -381,6 +382,24 @@ function GlobalStoreContextProvider(props) {
                     allPlaylists: payload.allPlaylists
                 });
             }
+            case GlobalStoreActionType.TRUE_COMMENT: {
+                return setStore({
+                    currentModal : CurrentModal.NONE,
+                    currentView : store.currentView,
+                    currentSort : store.currentSort,
+                    idNamePairs: payload.idNamePairs,
+                    currentList: store.currentList,
+                    playingList: payload.playingList,
+                    currentSongIndex: -1,
+                    currentSong: null,
+                    newListCounter: store.newListCounter,
+                    listNameActive: false,
+                    listIdMarkedForDeletion: null,
+                    listMarkedForDeletion: null,
+                    errorMessage: "",
+                    allPlaylists: payload.allPlaylists
+                });
+            }
             default:
                 return store;
 
@@ -388,19 +407,30 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setPlayingList = async function (id) {
+        console.log("PLAYING 1")
         try{
-            async function asyncSetCurrentList(id) {
+            async function asyncSetPlayingList(id) {
                 let response = await api.getPlaylistById(id);
                 if (response.data.success) {
+                    console.log("PLAYING 2")
                     let playlist = response.data.playlist;
-                    storeReducer({
-                        type: GlobalStoreActionType.SET_PLAYING_LIST,
-                        payload: playlist
-                    });
-                    tps.clearAllTransactions();
+                    playlist.listens = playlist.listens + 1;
+                    async function updateList(playlist) {
+                        response = await api.updatePlaylistById(playlist._id, playlist);
+                        if (response.data.success) {
+                            console.log("PLAYING 3")
+                            console.log(playlist)
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_PLAYING_LIST,
+                                payload: playlist
+                            });
+                        }
+                    }
+                    updateList(playlist)
                 }
             }
-            asyncSetCurrentList(id);
+            console.log("PLAYING 66")
+            asyncSetPlayingList(id);
             }catch(error){
                 console.log("ERROR HERE")
                 console.log(error)
@@ -565,7 +595,8 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 let playlist = response.data.playlist;
                 playlist.published = {isPublished: true, publishDate: (new Date()).toISOString()};
-                console.log(playlist)
+                console.log("PLAYLIST PUBLISHED?")
+                console.log(playlist.published)
                 async function updateList(playlist) {
                     response = await api.updatePlaylistById(playlist._id, playlist);
                     if (response.data.success) {
@@ -895,11 +926,11 @@ function GlobalStoreContextProvider(props) {
                                 console.log("CURRENT SORT NOW BEFORE LOAD::")
                                 console.log(store.currentSort)
                                 storeReducer({
-                                    type: GlobalStoreActionType.COMMENT,
+                                    type: GlobalStoreActionType.TRUE_COMMENT,
                                     payload: {
                                         idNamePairs: pairsArray,
                                         playlists: allLists,
-                                        currentList: playlist
+                                        playingList: playlist
                                     }
                                 });
                                 console.log("CURRENT SORT NOW AFTER LOAD::")
@@ -920,11 +951,11 @@ function GlobalStoreContextProvider(props) {
                                 console.log("CURRENT SORT NOW BEFORE LOAD::")
                                 console.log(store.currentSort)
                                 storeReducer({
-                                    type: GlobalStoreActionType.COMMENT,
+                                    type: GlobalStoreActionType.TRUE_COMMENT,
                                     payload: {
                                         idNamePairs: pairsArray,
                                         playlists: allLists,
-                                        currentList: playlist
+                                        playingList: playlist
                                     }
                                 });
                                 console.log("CURRENT SORT NOW AFTER LOAD::")
@@ -936,7 +967,7 @@ function GlobalStoreContextProvider(props) {
                                     payload: {
                                         idNamePairs: [],
                                         playlists: [],
-                                        currentList: null
+                                        playingList: null
                                     }
                                 });
                             }
@@ -956,7 +987,7 @@ function GlobalStoreContextProvider(props) {
                                     payload: {
                                         idNamePairs: pairsArray,
                                         playlists: allLists,
-                                        currentList: playlist
+                                        playingList: playlist
                                     }
                                 });
                                 console.log("CURRENT SORT NOW AFTER LOAD::")
@@ -968,7 +999,7 @@ function GlobalStoreContextProvider(props) {
                                     payload: {
                                         idNamePairs: [],
                                         playlists: [],
-                                        currentList: null
+                                        playingList: null
                                     }
                                 });
                             }

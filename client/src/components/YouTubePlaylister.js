@@ -1,13 +1,64 @@
 import React, { useContext, useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
 import { GlobalStoreContext } from '../store'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid';
+import FastRewindIcon from '@mui/icons-material/FastRewind';
+import StopIcon from '@mui/icons-material/Stop';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import FastForwardIcon from '@mui/icons-material/FastForward';
+import Button from '@mui/material/Button'
+
+const size = {
+  transform:"scale(1.8)"  
+}
+
+const gridSize = {
+  display:'flex',
+  alignItems:'center',
+  justifyContent:'center',
+}
+
+const cardStyle = {
+  width: '99%', 
+  fontSize: '18pt', 
+  backgroundColor: '#eeeeff', 
+  borderStyle: 'solid', 
+  borderWidth: 3,
+  borderRadius: 1, 
+  borderColor: '#000000',
+  height: '400%'
+}
+
+const cardStyle2 = {
+  width: '99%', 
+  fontSize: '18pt', 
+  backgroundColor: '#eeeeff', 
+  borderStyle: 'solid', 
+  borderWidth: 3,
+  borderRadius: 1, 
+  borderColor: '#000000',
+  height: '335%',
+  
+}
+
+const centerd = {
+  display:'flex',
+  alignItems:'center',
+  justifyContent:'center',
+}
+
 
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
+  let player = "";
     let youTubeIds = [];
+    let songInfos = [];
     if(store.playingList) {
       for(const song of store.playingList.songs) {
         youTubeIds.push(song.youTubeId)
+        songInfos.push(song)
       }
     }
     // THIS HAS THE YOUTUBE IDS FOR THE SONGS IN OUR PLAYLIST
@@ -17,7 +68,7 @@ export default function YouTubePlaylister() {
     let currentSong = 0;
 
     const playerOptions = {
-        height: '360',
+        height: '320',
         width: '620',
         playerVars: {
             // https://developers.google.com/youtube/player_parameters
@@ -27,10 +78,53 @@ export default function YouTubePlaylister() {
 
     // THIS FUNCTION LOADS THE CURRENT SONG INTO
     // THE PLAYER AND PLAYS IT
-    function loadAndPlayCurrentSong(player) {
+
+    function rewind() {
+      decSong()
+      loadAndPlayCurrentSong()
+    }
+
+    function pauseSong() {
+      player.pauseVideo()
+    }
+
+    function playSong() {
+      player.playVideo()
+    }
+
+    function skip() {
+      incSong()
+      loadAndPlayCurrentSong()
+    }
+
+    function loadAndPlayCurrentSong() {
         let song = playlist[currentSong];
         player.loadVideoById(song);
         player.playVideo();
+    }
+
+    let rwdButton = ""
+    let stopButton = ""
+    let playButton = ""
+    let fwdButton = ""
+
+    let currentPlaylistName = "";
+    let currentSongObj = "";
+    let songName = ""
+    let songArtist = ""
+    let songNum = ""
+    if(store.playingList) {
+        currentPlaylistName = store.playingList.name
+        currentSongObj = songInfos[currentSong]
+        if(currentSongObj) {
+          songName = currentSongObj.title
+          songArtist = currentSongObj.artist
+          songNum = currentSong
+        }
+        rwdButton = <FastRewindIcon sx={size}/>
+        stopButton = <StopIcon sx={size}/>
+        playButton = <PlayArrowIcon sx={size}/>
+        fwdButton = <FastForwardIcon sx={size}/>
     }
 
     // THIS FUNCTION INCREMENTS THE PLAYLIST SONG TO THE NEXT ONE
@@ -39,7 +133,16 @@ export default function YouTubePlaylister() {
         currentSong = currentSong % playlist.length;
     }
 
+    function decSong() {
+      currentSong--;
+      currentSong = currentSong % playlist.length;
+      if(currentSong <= -1) {
+        currentSong = playlist.length - 1
+      }
+  }
+
     function onPlayerReady(event) {
+      player = event.target
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -50,7 +153,7 @@ export default function YouTubePlaylister() {
     // VALUE OF 0 MEANS THE SONG PLAYING HAS ENDED.
     function onPlayerStateChange(event) {
         let playerStatus = event.data;
-        let player = event.target;
+        player = event.target;
         if (playerStatus === -1) {
             // VIDEO UNSTARTED
             console.log("-1 Video unstarted");
@@ -74,9 +177,46 @@ export default function YouTubePlaylister() {
         }
     }
 
-    return <YouTube
-        videoId={playlist[currentSong]}
-        opts={playerOptions}
-        onReady={onPlayerReady}
-        onStateChange={onPlayerStateChange} />;
+    return (<Box>
+            <Box style={cardStyle} sx={{disabled:'true', pointerEvents:'none'}}>
+              <YouTube
+                  videoId={playlist[currentSong]}
+                  opts={playerOptions}
+                  onReady={onPlayerReady}
+                  onStateChange={onPlayerStateChange} 
+                  disabled
+                  pointerEvents='None'/>
+                  
+              </Box>
+            <Box style={cardStyle2}>
+            <Typography>Playlist: {currentPlaylistName}</Typography>
+            <Typography>Song: {songNum}</Typography>
+            <Typography>Title: {songName}</Typography>
+            <Typography>Artist: {songArtist}</Typography>
+            <Grid container spaching={0.7} mt={1.5} mb={2.5} sx={[cardStyle,centerd,{display: store.playingList ? 'visible' : 'none'}]}>
+                <Grid item xs={2} md={2}/>
+                <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
+                <Button onClick={rewind}>
+                  {rwdButton}
+                  </Button>
+                </Grid>
+                <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
+                <Button onClick={pauseSong}>
+                  {stopButton}
+                  </Button>
+                </Grid>
+                <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
+                <Button onClick={playSong}>
+                  {playButton}
+                  </Button>
+                </Grid>
+                <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
+                  <Button onClick={skip}>
+                  {fwdButton}
+                  </Button>
+                </Grid>
+                <Grid item xs={2} md={2}/>
+            </Grid>
+            </Box>
+        </Box>)
 }

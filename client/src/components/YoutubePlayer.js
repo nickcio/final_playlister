@@ -30,14 +30,10 @@ const cardStyle2 = {
 }
 
 const YoutubePlayer = () => {
+    const { store } = useContext(GlobalStoreContext);
     return (
         <Box>
-            <Box style={cardStyle}>
                 <YouTubePlaylister/>
-            </Box>
-            <Box style={cardStyle2}>
-            Control Panel
-            </Box>
         </Box>
     )
 }
