@@ -11,6 +11,7 @@ import {
     Statusbar,
     WorkspaceScreen
 } from './components'
+import Box from '@mui/material/Box'
 /*
     This is our application's top-level component.
     

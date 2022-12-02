@@ -385,6 +385,7 @@ function ListCard(props) {
                 sx={{ height: '30rem', marginTop: '15px', p: 1 }}
                 style={isPlaying ? cardPlayingStyleOpen : (published ? publishedCardStyleOpen : cardStyleOpen)}
                 button
+                onClick={handlePlay}
                 className='list-container'
             >
              <Grid container spacing={0}>

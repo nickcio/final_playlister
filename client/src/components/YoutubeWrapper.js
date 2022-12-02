@@ -96,8 +96,10 @@ const YoutubeWrapper = () => {
                 </Box>
             </Grid>
         </Grid>
-         
-         {currentPlayer}
+        <Box sx={{display: playerOn === 0 ? 'none' : 'visible'}}>
+         <YoutubePlayer/>
+        </Box>
+        <Comments/>
         </div>
     )
 }
