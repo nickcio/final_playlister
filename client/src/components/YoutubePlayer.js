@@ -5,6 +5,7 @@ import Fab from '@mui/material/Fab'
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import YouTubePlaylister from './YouTubePlaylister';
 
 const cardStyle = {
     width: '99%', 
@@ -32,7 +33,7 @@ const YoutubePlayer = () => {
     return (
         <Box>
             <Box style={cardStyle}>
-                Youtube Embed
+                <YouTubePlaylister/>
             </Box>
             <Box style={cardStyle2}>
             Control Panel
