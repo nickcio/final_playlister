@@ -147,9 +147,11 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
     const [labelName, setLabelName] = useState("Playlist Name")
     const [textStyle, setTextStyle] = useState(textFieldGood)
+    const isGuest = Boolean(auth.user === "guest")
     let isOwner = Boolean(auth.user.email === idNamePair.playlist.ownerEmail)
     let published = idNamePair.playlist.published.isPublished;
     let listId = idNamePair.playlist._id
+
     let isPlaying = false
     if(store.playingList && store.playingList._id === idNamePair._id) {
         isPlaying = true;
@@ -281,15 +283,19 @@ function ListCard(props) {
     }
 
     function handleLike(event) {
-        console.log("LIKING")
         event.stopPropagation()
-        store.likeList(idNamePair._id, auth.user.email)
+        if(!isGuest) {
+            console.log("LIKING")
+            store.likeList(idNamePair._id, auth.user.email)
+        }
     }
 
     function handleDislike(event) {
-        console.log("DISLIKING")
         event.stopPropagation()
-        store.dislikeList(idNamePair._id, auth.user.email)
+        if(!isGuest) {
+            console.log("DISLIKING")
+            store.dislikeList(idNamePair._id, auth.user.email)
+        }
     }
 
     let addSongCard = 

@@ -415,7 +415,12 @@ function GlobalStoreContextProvider(props) {
                     console.log("PLAYING 2")
                     let playlist = response.data.playlist;
                     if(playlist.published.isPublished === true) {
-                        playlist.listens = playlist.listens + 1;
+                        if(store.playingList && store.playingList._id !== playlist._id) {
+                            playlist.listens = playlist.listens + 1;
+                        }
+                        else if(!store.playingList){
+                            playlist.listens = playlist.listens + 1;
+                        }
                     }
                     async function updateList(playlist) {
                         response = await api.updatePlaylistById(playlist._id, playlist);
