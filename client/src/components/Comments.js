@@ -27,7 +27,7 @@ const commentBox = {
     borderWidth: 3,
     borderRadius: 1, 
     borderColor: '#000000',
-    height: '86%',
+    height: '100%',
     overflow: 'scroll',
     overflowX: 'hidden'
 }

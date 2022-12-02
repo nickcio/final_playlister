@@ -53,6 +53,9 @@ const centerd = {
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
   let player = "";
+  if(store.playerS) {
+    player = store.playerS
+  }
     let youTubeIds = [];
     let songInfos = [];
     if(store.playingList) {
@@ -143,6 +146,7 @@ export default function YouTubePlaylister() {
 
     function onPlayerReady(event) {
       player = event.target
+      store.playerS = player
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -154,6 +158,7 @@ export default function YouTubePlaylister() {
     function onPlayerStateChange(event) {
         let playerStatus = event.data;
         player = event.target;
+        store.playerS = player
         if (playerStatus === -1) {
             // VIDEO UNSTARTED
             console.log("-1 Video unstarted");

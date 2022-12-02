@@ -91,6 +91,7 @@ function GlobalStoreContextProvider(props) {
     const history = useHistory();
     const [lastSort, setLastSort] = useState(CurrentSort.CREATED);
     const [search, setSearch] = useState("");
+    store.playerS = null
 
     console.log("inside useGlobalStore");
 
