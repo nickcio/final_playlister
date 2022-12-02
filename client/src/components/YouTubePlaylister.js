@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
 import { GlobalStoreContext } from '../store'
 
@@ -7,11 +7,15 @@ function YouTubePlaylister(props) {
   let player = "";
   let PLAYER_NAME = 'youtube_player';
 
+  let youTubeIds = []
+  if(store.currentList) {
+      for(const song of store.playingList.songs) {
+        youTubeIds.push(song.youTubeId)
+      }
+  }
   // THIS HAS THE YOUTUBE IDS FOR THE SONGS IN OUR PLAYLIST
-  let playlist = [
-
-  ];
-
+  let playlist = youTubeIds
+  console.log(playlist)
   // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
   let currentSong;
 
@@ -30,7 +34,7 @@ function YouTubePlaylister(props) {
 
     // NOW MAKE OUR PLAYER WITH OUR DESIRED PROPERTIES
     if (currentSong >= 0) {
-      player = new YT.Player(PLAYER_NAME, {
+      player = new YouTube.Player(PLAYER_NAME, {
         height: '390',
         width: '640',
         playerVars: {
@@ -105,7 +109,7 @@ function YouTubePlaylister(props) {
     }
   }
 
-  return <YouTube videoId="2g811Eo7K8U" opts={opts} onReady={this._onReady} />;
+  return <YouTube videoId={playlist} opts={player} />;
 }
 
 export default YouTubePlaylister;

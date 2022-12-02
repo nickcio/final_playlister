@@ -90,6 +90,7 @@ function GlobalStoreContextProvider(props) {
     const history = useHistory();
     const [lastSort, setLastSort] = useState(CurrentSort.CREATED);
     const [search, setSearch] = useState("");
+    const [playingList, setPlayingList] = useState(null)
 
     console.log("inside useGlobalStore");
 
@@ -386,6 +387,26 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.setPlayingList = async function (id) {
+        try{
+            async function asyncSetCurrentList(id) {
+                let response = await api.getPlaylistById(id);
+                if (response.data.success) {
+                    let playlist = response.data.playlist;
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_PLAYING_LIST,
+                        payload: playlist
+                    });
+                    tps.clearAllTransactions();
+                }
+            }
+            asyncSetCurrentList(id);
+            }catch(error){
+                console.log("ERROR HERE")
+                console.log(error)
+                history.push("/")
+            }
+    }
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.

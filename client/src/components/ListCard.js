@@ -27,6 +27,27 @@ import EditToolbar from './EditToolbar';
     @author McKilla Gorilla
 */
 
+const cardPlayingStyle = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#329ea8', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 1, 
+    borderColor: '#000000'
+}
+
+const cardPlayingStyleOpen = {
+    width: '100%', 
+    fontSize: '18pt', 
+    backgroundColor: '#329ea8', 
+    borderStyle: 'solid', 
+    borderWidth: 3,
+    borderRadius: 1, 
+    borderColor: '#000000',
+    cursor: 'default'
+}
+
 const cardStyle = {
     width: '100%', 
     fontSize: '18pt', 
@@ -129,6 +150,10 @@ function ListCard(props) {
     let isOwner = Boolean(auth.user.email === idNamePair.playlist.ownerEmail)
     let published = idNamePair.playlist.published.isPublished;
     let listId = idNamePair.playlist._id
+    let isPlaying = false
+    if(store.playingList && store.playingList._id === idNamePair._id) {
+        isPlaying = true;
+    }
     let thumbUpStyle = thumbStyle
     if(idNamePair.playlist.likeList.includes(auth.user.email)) {
         console.log("LIKER")
@@ -167,6 +192,7 @@ function ListCard(props) {
     let thumbUp = "";
 
     function handleLoadList(event, id) {
+        event.stopPropagation();
         console.log("handleLoadList for " + id);
         if (!event.target.disabled) {
             let _id = event.target.id;
@@ -187,11 +213,17 @@ function ListCard(props) {
         store.addNewSong();
     }
 
-    function handleCloseList() {
+    function handleCloseList(event) {
+        event.stopPropagation()
         store.closeCurrentList();
     }
 
+    function handlePlay() {
+        store.setPlayingList(listId)
+    }
+
     function handleToggleEdit(event) {
+        event.stopPropagation();
         if(!published && isOwner) {
             event.stopPropagation();
             toggleEdit();
@@ -304,8 +336,9 @@ function ListCard(props) {
             id={idNamePair._id}
             key={idNamePair._id}
             sx={{ marginTop: '15px', display: 'flex', p: 1 }}
-            style={published ? publishedCardStyle : cardStyle }
+            style={isPlaying ? cardPlayingStyle : (published ? publishedCardStyle : cardStyle) }
             button
+            onClick={handlePlay}
             onDoubleClick={handleToggleEdit}
         >
         <Grid container spacing={0}>
@@ -350,7 +383,7 @@ function ListCard(props) {
                 id={idNamePair._id}
                 key={idNamePair._id}
                 sx={{ height: '30rem', marginTop: '15px', p: 1 }}
-                style={published ? publishedCardStyleOpen : cardStyleOpen}
+                style={isPlaying ? cardPlayingStyleOpen : (published ? publishedCardStyleOpen : cardStyleOpen)}
                 button
                 className='list-container'
             >
