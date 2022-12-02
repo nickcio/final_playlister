@@ -9,6 +9,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import Button from '@mui/material/Button'
+import { cardMediaClasses } from '@mui/material';
 
 const size = {
   transform:"scale(1.8)"  
@@ -52,7 +53,7 @@ const centerd = {
 
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
-  let player = "";
+  let player = <YouTube/>;
   if(store.playerS) {
     player = store.playerS
   }
@@ -147,6 +148,7 @@ export default function YouTubePlaylister() {
     function onPlayerReady(event) {
       player = event.target
       store.playerS = player
+      
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -159,6 +161,8 @@ export default function YouTubePlaylister() {
         let playerStatus = event.data;
         player = event.target;
         store.playerS = player
+        console.log("PLAYEER!!")
+      console.log(player)
         if (playerStatus === -1) {
             // VIDEO UNSTARTED
             console.log("-1 Video unstarted");

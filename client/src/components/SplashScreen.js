@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom'
 import { GlobalStoreContext } from '../store'
 import AuthContext from '../auth'
+import Logo from '../PlaylisterIcon.png'
 
 const buttonStyle = {
     width: '150px', 
@@ -38,7 +39,7 @@ export default function SplashScreen() {
         <Grid container spacing={0} id="splash-screen">
             <Grid item xs={2} md={12} sx={{mt:10}}>
                 <Typography style={{fontSize: '18pt', fontStyle: 'italic'}}>Welcome To</Typography>
-                <Typography style={{fontSize: '5vw', fontStyle: 'italic'}}>Playlister</Typography>
+                <Typography style={{fontSize: '5vw', fontStyle: 'italic'}}><img src={Logo}/></Typography>
                 <Typography style={{fontSize: '18pt' }}>Playlister: The number one place to create, edit, and play playlists!<br/>Add your favorite songs and share them with others!</Typography>
             </Grid>
             <Grid item xs={2} md={2}></Grid>
