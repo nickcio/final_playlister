@@ -56,7 +56,7 @@ export default function SplashScreen() {
             </Grid>
             <Grid item xs={2} md={2}></Grid>
             <Grid item xs={2} md={2}>
-            <Typography sx={{mt:35}} style={{fontSize: '12pt', fontStyle: 'italic'}}>Nicholas Ciotoli, 2022</Typography>
+            <Typography sx={{mt:15}} style={{fontSize: '11pt', fontStyle: 'italic'}}>Nicholas Ciotoli, CSE 316 Fall 2022</Typography>
             </Grid>
         </Grid>
     )
