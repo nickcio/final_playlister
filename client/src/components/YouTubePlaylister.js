@@ -54,7 +54,10 @@ const centerd = {
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
   const [playerX, setPlayerX] = useState("")
+  const [songX, setSongX] = useState({name: "", art: "", num: 0})
     let player = ""
+    let currentSongObj = "";
+    let newSongX = {name: "", num: "", art: ""}
     if(playerX !== "") {
       player = playerX
     }
@@ -71,7 +74,11 @@ export default function YouTubePlaylister() {
 
     // THIS IS THE INDEX OF THE SONG CURRENTLY IN USE IN THE PLAYLIST
     let currentSong = 0;
-
+    if(store.playingList) {
+      currentSongObj = songInfos[currentSong]
+      console.log("CURRENT SONG OBJ")
+      console.log(currentSongObj)
+    }
     const playerOptions = {
         height: '320',
         width: '620',
@@ -106,44 +113,48 @@ export default function YouTubePlaylister() {
         let song = playlist[currentSong];
         player.loadVideoById(song);
         player.playVideo();
-    }
+        if(songInfos && currentSongObj) {
+        currentSongObj = songInfos[currentSong]
+        //setSongX({name: currentSongObj.title, num: currentSong+1, art: currentSongObj.artist})
+        }
+      }
 
     let rwdButton = ""
     let stopButton = ""
     let playButton = ""
     let fwdButton = ""
-
     let currentPlaylistName = "";
-    let currentSongObj = "";
-    let songName = ""
-    let songArtist = ""
-    let songNum = ""
     if(store.playingList) {
         currentPlaylistName = store.playingList.name
         currentSongObj = songInfos[currentSong]
-        if(currentSongObj) {
-          songName = currentSongObj.title
-          songArtist = currentSongObj.artist
-          songNum = currentSong
-        }
         rwdButton = <FastRewindIcon sx={size}/>
         stopButton = <StopIcon sx={size}/>
         playButton = <PlayArrowIcon sx={size}/>
         fwdButton = <FastForwardIcon sx={size}/>
     }
-
+    if(currentSongObj) {
+      newSongX = {name: currentSongObj.title, num: currentSong, art: currentSongObj.artist}
+        
+    }
     // THIS FUNCTION INCREMENTS THE PLAYLIST SONG TO THE NEXT ONE
     function incSong() {
+      console.log("FIRST INDEX BEFORE INCREASE")
+      console.log(currentSong)
         currentSong++;
-        currentSong = currentSong % playlist.length;
+        currentSong = currentSong % playlist.length
+        console.log("FIRST INDEX AFTER INCREASE")
+        console.log(currentSong)
     }
 
     function decSong() {
+      console.log("FIRST INDEX BEFORE DECREASE")
+      console.log(currentSong)
       currentSong--;
-      currentSong = currentSong % playlist.length;
       if(currentSong <= -1) {
         currentSong = playlist.length - 1
       }
+      console.log("FIRST INDEX AFTER DECREASE")
+      console.log(currentSong)
   }
 
     function onPlayerReady(event) {
@@ -184,6 +195,7 @@ export default function YouTubePlaylister() {
             // THE VIDEO HAS BEEN CUED
             console.log("5 Video cued");
         }
+        newSongX = {name: currentSongObj.title, num: currentSong, art: currentSongObj.artist}
     }
 
     return (<Box>
@@ -199,9 +211,9 @@ export default function YouTubePlaylister() {
               </Box>
             <Box style={cardStyle2}>
             <Typography>Playlist: {currentPlaylistName}</Typography>
-            <Typography>Song: {songNum}</Typography>
-            <Typography>Title: {songName}</Typography>
-            <Typography>Artist: {songArtist}</Typography>
+            <Typography>Song: {currentSong + 1}</Typography>
+            <Typography>Title: {newSongX.name}</Typography>
+            <Typography>Artist: {newSongX.art}</Typography>
             <Grid container spaching={0.7} mt={1.5} mb={2.5} sx={[cardStyle,centerd,{display: store.playingList ? 'visible' : 'none'}]}>
                 <Grid item xs={2} md={2}/>
                 <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
