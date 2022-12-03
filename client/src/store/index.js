@@ -1286,6 +1286,7 @@ function GlobalStoreContextProvider(props) {
             if (response.data.success) {
                 let playlist = response.data.playlist;
                 let likesList = playlist.likeList
+                let dislikesList = playlist.dislikeList
                 if(likesList.includes(email)) {
                     console.log("HAS LIKED BEFORE")
                     likesList.splice(likesList.indexOf(email),1)
@@ -1297,6 +1298,12 @@ function GlobalStoreContextProvider(props) {
                     likesList.push(email)
                     playlist.likeList = likesList
                     playlist.likes = playlist.likes + 1
+                    if(dislikesList.includes(email)) {
+                        console.log("HAS LIKED BEFORE")
+                        dislikesList.splice(dislikesList.indexOf(email),1)
+                        playlist.dislikeList = dislikesList
+                        playlist.dislikes = playlist.dislikes - 1
+                    }
                 }
                 console.log(likesList)
                 async function updateList(playlist) {
@@ -1316,6 +1323,7 @@ function GlobalStoreContextProvider(props) {
             let response = await api.getPlaylistById(id);
             if (response.data.success) {
                 let playlist = response.data.playlist;
+                let likesList = playlist.likeList
                 let dislikesList = playlist.dislikeList
                 if(dislikesList.includes(email)) {
                     console.log("HAS LIKED BEFORE")
@@ -1328,6 +1336,12 @@ function GlobalStoreContextProvider(props) {
                     dislikesList.push(email)
                     playlist.dislikeList = dislikesList
                     playlist.dislikes = playlist.dislikes + 1
+                    if(likesList.includes(email)) {
+                        console.log("HAS LIKED BEFORE")
+                        likesList.splice(likesList.indexOf(email),1)
+                        playlist.likeList = likesList
+                        playlist.likes = playlist.likes - 1
+                    }
                 }
                 console.log(dislikesList)
                 async function updateList(playlist) {

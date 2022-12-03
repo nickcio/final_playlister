@@ -134,7 +134,12 @@ const thumbStyle = {
 }
 
 const thumbStyleClicked = {
-    color: 'blue',
+    color: 'green',
+    fontSize: '18pt'
+}
+
+const thumbStyleClicked2 = {
+    color: 'red',
     fontSize: '18pt'
 }
 
@@ -165,7 +170,7 @@ function ListCard(props) {
     let thumbDownStyle = thumbStyle
     if(idNamePair.playlist.dislikeList.includes(auth.user.email)) {
         console.log("DISLIKER")
-        thumbDownStyle = thumbStyleClicked
+        thumbDownStyle = thumbStyleClicked2
     }
 
     let userName = ""
