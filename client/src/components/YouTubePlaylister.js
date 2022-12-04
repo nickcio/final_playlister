@@ -199,7 +199,7 @@ export default function YouTubePlaylister() {
             // THE VIDEO HAS BEEN CUED
             console.log("5 Video cued");
         }
-        document.getElementById("current-song-id").innerHTML = "Song: " + (currentSong + 1);
+        document.getElementById("current-song-id").innerHTML = "Song: #" + (currentSong + 1);
         if(store.playingList && store.playingList.songs && store.playingList.songs[currentSong]) {
         document.getElementById("current-song-title").innerHTML = "Title: " + (store.playingList.songs[currentSong].title);
         }else{
