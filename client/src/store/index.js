@@ -747,6 +747,34 @@ function GlobalStoreContextProvider(props) {
         asyncLoadIdNamePairsByList(name);
     }
 
+    store.loadIdNamePairsByHome = function (name) {
+        setSearch("")
+        async function asyncLoadIdNamePairs(name) {
+            const response = await api.getPlaylistPairs();
+            if (response.data.success) {
+                let pairsArray = response.data.idNamePairs;
+                pairsArray = pairsArray.filter((pair) => pair.name.includes(name));
+                pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
+                let allLists = response.data.playlists;
+                console.log("CURRENT SORT NOW BEFORE LOAD::")
+                console.log(store.currentSort)
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: {
+                        idNamePairs: pairsArray,
+                        playlists: allLists
+                    }
+                });
+                console.log("CURRENT SORT NOW AFTER LOAD::")
+                console.log(store.currentSort)
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        asyncLoadIdNamePairs(name);
+    }
+
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = function () {
         setSearch("")

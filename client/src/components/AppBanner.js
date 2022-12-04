@@ -152,6 +152,8 @@ export default function AppBanner() {
             }
             else if(inLists) {
                 store.loadIdNamePairsByList(text)
+            }else if (inHome) {
+                store.loadIdNamePairsByHome(text)
             }
         }
     }
