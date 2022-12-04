@@ -429,6 +429,9 @@ function GlobalStoreContextProvider(props) {
                                 const response = await api.getPlaylistPairs();
                                 if (response.data.success) {
                                     let pairsArray = response.data.idNamePairs;
+                                    if(search !== "") {
+                                        pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                                    }
                                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                     let allLists = response.data.playlists;
                                     console.log("CURRENT SORT NOW BEFORE LOAD:: HOME")
@@ -545,6 +548,9 @@ function GlobalStoreContextProvider(props) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                if(search !== "") {
+                                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                                }
                                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 let allLists = response.data.playlists;
                                 storeReducer({
@@ -650,6 +656,9 @@ function GlobalStoreContextProvider(props) {
                 response = await api.getPlaylistPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
+                    if(search !== "") {
+                        pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                    }
                     pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                     let allLists = response.data.playlists;
                     console.log("NEW LIST")
@@ -689,6 +698,9 @@ function GlobalStoreContextProvider(props) {
                             response = await api.getPlaylistPairs();
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
+                                if(search !== "") {
+                                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                                }
                                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                                 let allLists = response.data.playlists;
                                 console.log(allLists)
@@ -748,7 +760,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.loadIdNamePairsByHome = function (name) {
-        setSearch("")
+        setSearch(name)
         async function asyncLoadIdNamePairs(name) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
@@ -844,6 +856,9 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                if(search !== "") {
+                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                }
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                 let allLists = response.data.playlists;
                 console.log("CURRENT SORT NOW BEFORE LOAD::")
@@ -929,6 +944,9 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                if(search !== "") {
+                    pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                }
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                 let allLists = response.data.playlists;
                 console.log("CURRENT SORT NOW BEFORE LOAD::")
@@ -1223,6 +1241,9 @@ function GlobalStoreContextProvider(props) {
                 const response = await api.getPlaylistPairs();
                 if (response.data.success) {
                     let pairsArray = response.data.idNamePairs;
+                    if(search !== "") {
+                        pairsArray = pairsArray.filter((pair) => pair.name.includes(search));
+                    }
                     pairsArray.sort(store.comparator(store.getSortTypeAlt(sortType)))
                     let allLists = response.data.playlists;
                     console.log("CURRENT SORT NOW BEFORE LOAD::")
@@ -1642,6 +1663,7 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPlaylistPairs();
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                
                 pairsArray.sort(store.comparator(store.getSortTypeAlt(store.currentSort)))
                 let allLists = response.data.playlists;
                 console.log("CURRENT SORT NOW BEFORE LOAD::")
