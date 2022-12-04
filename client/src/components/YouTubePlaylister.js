@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import YouTube from 'react-youtube';
 import { GlobalStoreContext } from '../store'
 import Typography from '@mui/material/Typography'
@@ -53,14 +53,17 @@ const centerd = {
 
 export default function YouTubePlaylister() {
   const { store } = useContext(GlobalStoreContext);
-  const [playerX, setPlayerX] = useState("")
-  const [songX, setSongX] = useState({name: "", art: "", num: 0})
+  const [songId, setSongId] = useState(0)
+  const playerX = useRef(null)
     let player = ""
+    if(playerX) {
+      console.log("PLAUYER X EXISTS")
+      console.log(playerX)
+      player = playerX.current
+      console.log(player)
+    }
     let currentSongObj = "";
     let newSongX = {name: "", num: "", art: ""}
-    if(playerX !== "") {
-      player = playerX
-    }
     let youTubeIds = [];
     let songInfos = [];
     if(store.playingList) {
@@ -117,6 +120,7 @@ export default function YouTubePlaylister() {
         currentSongObj = songInfos[currentSong]
         //setSongX({name: currentSongObj.title, num: currentSong+1, art: currentSongObj.artist})
         }
+        
       }
 
     let rwdButton = ""
@@ -158,8 +162,8 @@ export default function YouTubePlaylister() {
   }
 
     function onPlayerReady(event) {
-      setPlayerX(event.target)
       player = event.target
+      playerX.current = player
         loadAndPlayCurrentSong(event.target);
         event.target.playVideo();
     }
@@ -171,7 +175,7 @@ export default function YouTubePlaylister() {
     function onPlayerStateChange(event) {
         let playerStatus = event.data;
         player = event.target
-        setPlayerX(event.target)
+        playerX.current = player
         console.log("PLAYEER!!")
       console.log(player)
         if (playerStatus === -1) {
@@ -195,7 +199,17 @@ export default function YouTubePlaylister() {
             // THE VIDEO HAS BEEN CUED
             console.log("5 Video cued");
         }
-        newSongX = {name: currentSongObj.title, num: currentSong, art: currentSongObj.artist}
+        document.getElementById("current-song-id").innerHTML = "Song: " + (currentSong + 1);
+        if(store.playingList && store.playingList.songs && store.playingList.songs[currentSong]) {
+        document.getElementById("current-song-title").innerHTML = "Title: " + (store.playingList.songs[currentSong].title);
+        }else{
+          document.getElementById("current-song-title").innerHTML = "Title: "
+        }
+        if(store.playingList && store.playingList.songs && store.playingList.songs[currentSong]) {
+          document.getElementById("current-song-artist").innerHTML = "Artist: " + (store.playingList.songs[currentSong].artist);
+          }else{
+            document.getElementById("current-song-artist").innerHTML = "Artist: "
+          }
     }
 
     return (<Box>
@@ -206,14 +220,15 @@ export default function YouTubePlaylister() {
                   onReady={onPlayerReady}
                   onStateChange={onPlayerStateChange} 
                   disabled
+                  ref={player}
                   pointerEvents='None'/>
                   
               </Box>
             <Box style={cardStyle2}>
             <Typography>Playlist: {currentPlaylistName}</Typography>
-            <Typography>Song: {currentSong + 1}</Typography>
-            <Typography>Title: {newSongX.name}</Typography>
-            <Typography>Artist: {newSongX.art}</Typography>
+            <Typography id="current-song-id">Song: </Typography>
+            <Typography id="current-song-title">Title: </Typography>
+            <Typography id="current-song-artist">Artist: </Typography>
             <Grid container spaching={0.7} mt={1.5} mb={2.5} sx={[cardStyle,centerd,{display: store.playingList ? 'visible' : 'none'}]}>
                 <Grid item xs={2} md={2}/>
                 <Grid item xs={2} md={2} sx={[gridSize,cardStyle2]}>
